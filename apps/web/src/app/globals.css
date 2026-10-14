@@ -1,22 +1,57 @@
 :root {
+  /* Brand Canvas & Surface Palette (Stripe/Linear Layered Navy) */
   --bg-main: #0B1220;
+  --bg-canvas: #080D18;
   --surface: #111A2E;
+  --surface-card: #121C32;
   --surface-elevated: #16223A;
+  --surface-hover: #1A2844;
+  --surface-subtle: rgba(22, 34, 58, 0.4);
+
+  /* Borders & Dividers */
   --border: #22304D;
-  --text-primary: #E6EAF2;
-  --text-muted: #8A97B2;
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-card: #1D2A44;
+  --border-card-hover: rgba(201, 162, 75, 0.35);
+
+  /* High Contrast Typography (WCAG AA & AAA Compliant) */
+  --text-primary: #F0F4FA;
+  --text-secondary: #94A3B8;
+  --text-muted: #7E8DA6;
+  --text-faint: #4B5B76;
+
+  /* Enterprise Gold Accent System */
   --gold: #C9A24B;
-  --gold-hover: #D9B65F;
+  --gold-hover: #DFBF6E;
+  --gold-glow: rgba(201, 162, 75, 0.15);
+  --gold-dim: rgba(201, 162, 75, 0.08);
+
+  /* Status Accents */
   --success: #2FBF8F;
-  --danger: #E5484D;
+  --success-glow: rgba(47, 191, 143, 0.15);
+  --danger: #EC5A60;
+  --danger-glow: rgba(236, 90, 96, 0.15);
   --warning: #E0A93B;
+
+  /* Elevation Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
+  --shadow-gold: 0 2px 10px rgba(201, 162, 75, 0.25);
+
+  /* Typography Stacks */
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-arabic: "Segoe UI", Tahoma, "Noto Sans Arabic", Arial, sans-serif;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html[dir="rtl"] {
+  font-family: var(--font-family-arabic);
 }
 
 body {
@@ -26,10 +61,13 @@ body {
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Tabular Numerals for Financial Data */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 a {
@@ -40,4 +78,174 @@ a {
 button {
   cursor: pointer;
   font-family: inherit;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+/* Enterprise Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E2C48;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2D3E64;
+}
+
+/* Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Stripe/Linear Layered Card Styling */
+.card-hover-lift {
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-1px);
+  border-color: var(--border-card-hover) !important;
+  box-shadow: var(--shadow-card-hover) !important;
+}
+
+/* Asymmetric Financial Command Grid */
+.asymmetric-command-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Context Strip */
+.context-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background-color: rgba(22, 34, 58, 0.45);
+  border: 1px solid #1D2A44;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: #94A3B8;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Responsive & RTL Layout Rules */
+@media (max-width: 1200px) {
+  .asymmetric-command-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .header-fiscal-badge {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: inline-flex !important;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sidebar-container {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    inset-inline-start: 0;
+    transform: translateX(-100%);
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html[dir="rtl"] .sidebar-container {
+    transform: translateX(100%);
+  }
+
+  .sidebar-container.mobile-open {
+    transform: translateX(0) !important;
+  }
+
+  .header-search-container {
+    display: none !important;
+  }
+}
+
+/* Light Theme Variables Override */
+[data-theme="light"] {
+  --bg-main: #F4F6F9;
+  --bg-canvas: #EAEFF5;
+  --surface: #FFFFFF;
+  --surface-card: #FFFFFF;
+  --surface-elevated: #F8FAFC;
+  --surface-hover: #F1F5F9;
+  --surface-subtle: rgba(0, 0, 0, 0.04);
+
+  --border: #CBD5E1;
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-card: #E2E8F0;
+  --border-card-hover: rgba(201, 162, 75, 0.5);
+
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-faint: #94A3B8;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] .sidebar-container {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* cmdk Command Menu Item Hover */
+.cmdk-item {
+  transition: background-color 100ms ease, color 100ms ease;
+}
+
+.cmdk-item:hover,
+.cmdk-item[data-selected="true"] {
+  background-color: rgba(201, 162, 75, 0.15) !important;
+  color: #DFBF6E !important;
 }
