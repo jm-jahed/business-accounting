@@ -1,0 +1,43 @@
+:root {
+  --bg-main: #0B1220;
+  --surface: #111A2E;
+  --surface-elevated: #16223A;
+  --border: #22304D;
+  --text-primary: #E6EAF2;
+  --text-muted: #8A97B2;
+  --gold: #C9A24B;
+  --gold-hover: #D9B65F;
+  --success: #2FBF8F;
+  --danger: #E5484D;
+  --warning: #E0A93B;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}

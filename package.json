@@ -1,0 +1,15 @@
+{
+  "name": "business-accounting-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Universal Business Accounting & Management System Monorepo",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "devDependencies": {
+    "pnpm": "^9.15.9",
+    "typescript": "^5.7.3"
+  }
+}
