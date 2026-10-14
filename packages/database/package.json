@@ -6,11 +6,13 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test dist/**/*.test.js"
   },
   "dependencies": {
-    "@accounting/core": "workspace:*",
     "@accounting/contracts": "workspace:*",
+    "@accounting/core": "workspace:*",
+    "dotenv": "^18.0.7",
     "mongoose": "^8.9.5"
   },
   "devDependencies": {

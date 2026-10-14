@@ -1,3 +1,21 @@
-// Core database package exports placeholder (Step 1 scaffold)
-// Full models and tenant plugins to be integrated in approved subsequent steps
-export const DATABASE_VERSION = '1.0.0';
+/**
+ * Business Accounting & Management System
+ * Database Package Public Entrypoint
+ */
+
+export * from './config.js';
+export * from './connection.js';
+
+// Models
+export * from './models/User.js';
+export * from './models/Company.js';
+export * from './models/Branch.js';
+export * from './models/CompanyMembership.js';
+export * from './models/CompanyInvitation.js';
+export * from './models/Account.js';
+
+// Domain Services & Multi-Tenant Boundaries
+export * from './services/tenant.context.js';
+export * from './services/account.service.js';
+
+export const DATABASE_PACKAGE_VERSION = '1.0.0';
