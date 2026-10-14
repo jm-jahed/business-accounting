@@ -5,7 +5,7 @@
 
 import dns from 'dns';
 import mongoose from 'mongoose';
-import { DatabaseConfig, loadDatabaseConfig, sanitizeMongoUri, sanitizeErrorMessage } from './config.js';
+import { DatabaseConfig, loadDatabaseConfig, sanitizeMongoUri, sanitizeErrorMessage, assertTestDatabase } from './config.js';
 
 // Ensure SRV DNS resolution succeeds on systems with restrictive local DNS (e.g. Windows)
 try {
@@ -64,6 +64,10 @@ export class DatabaseManager {
     }
 
     this.config = overrideConfig || this.config || loadDatabaseConfig();
+
+    if (this.config.isTestMode || process.env.NODE_ENV === 'test') {
+      assertTestDatabase(this.config.dbName);
+    }
 
     const connectOptions: mongoose.ConnectOptions = {
       dbName: this.config.dbName,

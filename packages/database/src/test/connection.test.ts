@@ -20,14 +20,15 @@ describe('Database Connection Manager Suite', () => {
 
   it('should fail safely and sanitize errors when connecting with unreachable URI', async () => {
     const unreachableConfig = {
-      uri: 'mongodb://nonexistent_user:superSecretPassword987@127.0.0.1:27099/fake_db',
-      dbName: 'fake_db',
+      uri: 'mongodb://nonexistent_user:superSecretPassword987@127.0.0.1:27099/unreachable_test',
+      dbName: 'unreachable_test',
       serverSelectionTimeoutMS: 500,
       connectTimeoutMS: 500,
       socketTimeoutMS: 500,
       maxPoolSize: 2,
       minPoolSize: 1,
       isProduction: false,
+      isTestMode: true,
     };
 
     try {

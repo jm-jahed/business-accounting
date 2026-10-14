@@ -15,21 +15,10 @@ import {
 } from 'recharts';
 import { TrendingUp, BarChart3, Clock, AlertCircle } from 'lucide-react';
 
-const cashFlowData = [
-  { month: 'May', inflow: 142000, outflow: 98000 },
-  { month: 'Jun', inflow: 168000, outflow: 112000 },
-  { month: 'Jul', inflow: 155000, outflow: 105000 },
-  { month: 'Aug', inflow: 189000, outflow: 124000 },
-  { month: 'Sep', inflow: 174000, outflow: 119000 },
-  { month: 'Oct', inflow: 215000, outflow: 138000 },
-];
+const cashFlowData: Array<{ month: string; inflow: number; outflow: number }> = [];
 
-const incomeExpenseData = [
-  { period: 'Q1', revenue: 480000, expense: 310000 },
-  { period: 'Q2', revenue: 520000, expense: 340000 },
-  { period: 'Q3', revenue: 590000, expense: 385000 },
-  { period: 'Q4 (Est)', revenue: 640000, expense: 410000 },
-];
+const incomeExpenseData: Array<{ period: string; revenue: number; expense: number }> = [];
+
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -312,10 +301,10 @@ export function FinancialChartsSection() {
 
 export function ArAgingBucketsWidget() {
   const buckets = [
-    { label: '0–30 Days (Current)', amount: '68,500.00', pct: '60%', color: '#2FBF8F' },
-    { label: '31–60 Days', amount: '28,400.00', pct: '25%', color: '#60A5FA' },
-    { label: '61–90 Days', amount: '12,200.00', pct: '11%', color: '#F59E0B' },
-    { label: '90+ Days (Overdue)', amount: '5,180.00', pct: '4%', color: '#EC5A60' },
+    { label: '0–30 Days (Current)', amount: '0.00', pct: '0%', color: '#2FBF8F' },
+    { label: '31–60 Days', amount: '0.00', pct: '0%', color: '#60A5FA' },
+    { label: '61–90 Days', amount: '0.00', pct: '0%', color: '#F59E0B' },
+    { label: '90+ Days (Overdue)', amount: '0.00', pct: '0%', color: '#EC5A60' },
   ];
 
   return (
@@ -344,7 +333,7 @@ export function ArAgingBucketsWidget() {
           </span>
         </div>
         <span style={{ fontSize: '12px', color: '#94A3B8' }}>
-          Total Outstanding: <strong style={{ color: '#F0F4FA' }}>AED 114,280.00</strong>
+          Total Outstanding: <strong style={{ color: '#DFBF6E' }}>AED 0.00</strong>
         </span>
       </div>
 

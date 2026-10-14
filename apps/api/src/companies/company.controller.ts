@@ -50,6 +50,16 @@ export class CompanyController {
     return this.companyService.acceptInvitation(body);
   }
 
+  @Get('by-slug/:storeSlug')
+  @UseGuards(JwtAuthGuard, TenantGuard)
+  @HttpCode(HttpStatus.OK)
+  async getCompanyBySlug(
+    @Param('storeSlug') _storeSlug: string,
+    @CurrentTenant() tenant: TenantContext
+  ) {
+    return this.companyService.getCompanyDetails(tenant.companyId, tenant);
+  }
+
   @Get(':companyId')
   @UseGuards(JwtAuthGuard, TenantGuard)
   @HttpCode(HttpStatus.OK)
@@ -65,18 +75,18 @@ export class CompanyController {
   @Roles('owner', 'admin')
   @HttpCode(HttpStatus.CREATED)
   async inviteUser(
-    @Param('companyId') companyId: string,
+    @CurrentTenant() tenant: TenantContext,
     @CurrentUser() user: JwtUserPayload,
     @Body() body: InviteUserInput
   ) {
-    return this.companyService.inviteUser(companyId, user.sub, body);
+    return this.companyService.inviteUser(tenant.companyId, user.sub, body);
   }
 
   @Get(':companyId/invitations')
   @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
   @Roles('owner', 'admin')
   @HttpCode(HttpStatus.OK)
-  async listInvitations(@Param('companyId') companyId: string) {
-    return this.companyService.listInvitations(companyId);
+  async listInvitations(@CurrentTenant() tenant: TenantContext) {
+    return this.companyService.listInvitations(tenant.companyId);
   }
 }

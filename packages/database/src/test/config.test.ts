@@ -5,6 +5,7 @@ import {
   DatabaseConfigurationError,
   sanitizeMongoUri,
   sanitizeErrorMessage,
+  assertTestDatabase,
 } from '../config.js';
 
 describe('Database Configuration & Sanitization Suite', () => {
@@ -88,5 +89,36 @@ describe('Database Configuration & Sanitization Suite', () => {
 
     assert(!sanitized.includes('SecretPass123'), 'Sanitized error message must not contain password');
     assert(sanitized.includes('mongodb+srv://***:***@cluster0.3l32jb8.mongodb.net'), 'Sanitized error must keep host reference');
+  });
+
+  it('assertTestDatabase should succeed when database name ends with _test', () => {
+    assert.doesNotThrow(() => assertTestDatabase('business_accounting_test'));
+    assert.doesNotThrow(() => assertTestDatabase('my_app_shard_01_test'));
+  });
+
+  it('assertTestDatabase should throw when database name does not end with _test', () => {
+    assert.throws(
+      () => assertTestDatabase('business_accounting'),
+      /Safety Violation: Database name must end with "_test"/
+    );
+    assert.throws(
+      () => assertTestDatabase('production_db'),
+      /Safety Violation: Database name must end with "_test"/
+    );
+    assert.throws(
+      () => assertTestDatabase(''),
+      /Safety Violation: Database name must end with "_test"/
+    );
+  });
+
+  it('loadDatabaseConfig should reject non-test database in test environment', () => {
+    assert.throws(
+      () => loadDatabaseConfig({
+        MONGODB_URI: 'mongodb://127.0.0.1:27017',
+        NODE_ENV: 'test',
+        DB_NAME: 'production_accounting',
+      }),
+      /Safety Violation: Database name must end with "_test"/
+    );
   });
 });

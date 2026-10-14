@@ -14,18 +14,7 @@ import {
 } from 'lucide-react';
 
 export function ChartOfAccountsView() {
-  const accounts = [
-    { code: '1010', name: 'Main Cash on Hand', type: 'ASSET', balance: 'DEBIT', amount: 'AED 385,200.00', status: 'ACTIVE' },
-    { code: '1020', name: 'Emirates NBD Operating Account', type: 'ASSET', balance: 'DEBIT', amount: 'AED 43,300.00', status: 'ACTIVE' },
-    { code: '1200', name: 'Accounts Receivable (Trade Debtors)', type: 'ASSET', balance: 'DEBIT', amount: 'AED 114,280.00', status: 'ACTIVE' },
-    { code: '2010', name: 'Trade Creditors (Accounts Payable)', type: 'LIABILITY', balance: 'CREDIT', amount: 'AED 48,920.00', status: 'ACTIVE' },
-    { code: '2050', name: 'VAT 5% Output Tax Payable', type: 'LIABILITY', balance: 'CREDIT', amount: 'AED 14,230.00', status: 'ACTIVE' },
-    { code: '3010', name: 'Owner Contributed Capital', type: 'EQUITY', balance: 'CREDIT', amount: 'AED 300,000.00', status: 'ACTIVE' },
-    { code: '3020', name: 'Retained Earnings', type: 'EQUITY', balance: 'CREDIT', amount: 'AED 120,000.00', status: 'ACTIVE' },
-    { code: '4010', name: 'Commercial Sales & Consulting Revenue', type: 'REVENUE', balance: 'CREDIT', amount: 'AED 625,400.00', status: 'ACTIVE' },
-    { code: '5010', name: 'Office Rent & Commercial Premises', type: 'EXPENSE', balance: 'DEBIT', amount: 'AED 99,000.00', status: 'ACTIVE' },
-    { code: '5020', name: 'Staff Salaries & Benefits', type: 'EXPENSE', balance: 'DEBIT', amount: 'AED 142,500.00', status: 'ACTIVE' },
-  ];
+  const accounts: Array<{ code: string; name: string; type: string; balance: string; amount: string; status: string }> = [];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -35,7 +24,7 @@ export function ChartOfAccountsView() {
             Chart of Accounts
           </h1>
           <p style={{ fontSize: '13px', color: '#8A97B2', marginTop: '2px' }}>
-            Standard Enterprise Chart of Accounts (Seeded DXB-01 Ledger)
+            Standard Enterprise Chart of Accounts (Phase 2 Ledger Integration)
           </p>
         </div>
         <span
@@ -49,7 +38,7 @@ export function ChartOfAccountsView() {
             fontWeight: 600,
           }}
         >
-          17 Seed Accounts Configured
+          0 Accounts Configured
         </span>
       </div>
 
@@ -69,67 +58,20 @@ export function ChartOfAccountsView() {
               <th style={{ padding: '10px 16px', textAlign: 'start' }}>ACCOUNT NAME</th>
               <th style={{ padding: '10px 16px', textAlign: 'start' }}>TYPE</th>
               <th style={{ padding: '10px 16px', textAlign: 'start' }}>NORMAL BALANCE</th>
-              <th style={{ padding: '10px 16px', textAlign: 'end' }}>BALANCE (AED)</th>
+              <th style={{ padding: '10px 16px', textAlign: 'end' }}>BALANCE</th>
               <th style={{ padding: '10px 16px', textAlign: 'center' }}>STATUS</th>
             </tr>
           </thead>
           <tbody>
-            {accounts.map((a) => (
-              <tr
-                key={a.code}
-                style={{
-                  borderBottom: '1px solid #1D2A44',
-                  transition: 'background-color 100ms ease',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(22, 34, 58, 0.5)')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <td style={{ padding: '10px 16px', fontFamily: 'monospace', color: '#DFBF6E', fontWeight: 600 }}>
-                  {a.code}
-                </td>
-                <td style={{ padding: '10px 16px', color: '#F0F4FA', fontWeight: 500 }}>{a.name}</td>
-                <td style={{ padding: '10px 16px' }}>
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      backgroundColor: '#16223A',
-                      color: '#8A97B2',
-                      border: '1px solid #22304D',
-                    }}
-                  >
-                    {a.type}
-                  </span>
-                </td>
-                <td style={{ padding: '10px 16px', color: '#8A97B2' }}>{a.balance}</td>
-                <td
-                  style={{
-                    padding: '10px 16px',
-                    textAlign: 'end',
-                    fontFamily: 'monospace',
-                    fontWeight: 600,
-                    color: '#F0F4FA',
-                  }}
-                >
-                  {a.amount}
-                </td>
-                <td style={{ padding: '10px 16px', textAlign: 'center' }}>
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      backgroundColor: 'rgba(47, 191, 143, 0.12)',
-                      color: '#2FBF8F',
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {a.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            <tr>
+              <td colSpan={6} style={{ padding: '40px 16px', textAlign: 'center', color: '#7E8DA6' }}>
+                <Layers size={32} color="#C9A24B" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.7 }} />
+                <div style={{ fontWeight: 600, color: '#F0F4FA', marginBottom: '4px' }}>No Chart of Accounts Loaded</div>
+                <div style={{ fontSize: '12px' }}>
+                  Statutory chart of accounts configuration and balance tracking will activate in Phase 2 with General Ledger persistence.
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -151,7 +93,7 @@ export function GeneralLedgerView() {
 
       <div
         style={{
-          padding: '30px',
+          padding: '40px 30px',
           backgroundColor: '#111A2E',
           border: '1px solid #1D2A44',
           borderRadius: '12px',
@@ -159,27 +101,28 @@ export function GeneralLedgerView() {
           boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
         }}
       >
-        <BookOpen size={40} color="#C9A24B" style={{ margin: '0 auto 12px' }} />
+        <BookOpen size={40} color="#C9A24B" style={{ margin: '0 auto 12px', opacity: 0.8 }} />
         <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#F0F4FA', marginBottom: '6px' }}>
-          General Ledger Audit Feed Active
+          No General Ledger Postings Recorded
         </h3>
         <p style={{ fontSize: '13px', color: '#8A97B2', maxWidth: '480px', margin: '0 auto 16px' }}>
-          Seed journal batches are mathematically verified with 0.0000 variance. Production ledger posting connects to the primary journal ledger in Phase 2.
+          Immutable journal batches and multi-currency general ledger transactions will appear here once vouchers are posted in Phase 2.
         </p>
         <span
           style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
-            backgroundColor: 'rgba(47, 191, 143, 0.12)',
-            color: '#2FBF8F',
+            backgroundColor: 'rgba(201, 162, 75, 0.12)',
+            color: '#DFBF6E',
+            border: '1px solid rgba(201, 162, 75, 0.3)',
             padding: '4px 12px',
             borderRadius: '6px',
             fontSize: '12px',
             fontWeight: 600,
           }}
         >
-          <CheckCircle2 size={14} /> Double-Entry Ledger Balanced (AED 56,300.00)
+          <Lock size={13} /> Double-Entry Engine Ready (0 Transactions)
         </span>
       </div>
     </div>
@@ -187,12 +130,7 @@ export function GeneralLedgerView() {
 }
 
 export function SalesInvoicesView() {
-  const invoices = [
-    { no: 'INV-1092', customer: 'Apex Global Logistics FZE', date: 'Oct 14, 2026', due: 'Nov 13, 2026', total: 'AED 15,400.00', status: 'SETTLED' },
-    { no: 'INV-1091', customer: 'Blue Horizon Tech Hub LLC', date: 'Oct 10, 2026', due: 'Nov 09, 2026', total: 'AED 42,000.00', status: 'PENDING' },
-    { no: 'INV-1090', customer: 'Crescent Moon Media Group', date: 'Oct 04, 2026', due: 'Nov 03, 2026', total: 'AED 18,200.00', status: 'PENDING' },
-    { no: 'INV-1089', customer: 'Desert Bloom Ventures LLC', date: 'Sep 28, 2026', due: 'Oct 28, 2026', total: 'AED 38,680.00', status: 'OVERDUE' },
-  ];
+  const invoices: Array<{ no: string; customer: string; date: string; due: string; total: string; status: string }> = [];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -207,15 +145,15 @@ export function SalesInvoicesView() {
         </div>
         <span
           style={{
-            backgroundColor: 'rgba(47, 191, 143, 0.12)',
-            color: '#2FBF8F',
+            backgroundColor: 'rgba(201, 162, 75, 0.12)',
+            color: '#DFBF6E',
             borderRadius: '6px',
             padding: '4px 10px',
             fontSize: '12px',
             fontWeight: 600,
           }}
         >
-          Total AR: AED 114,280.00
+          Total AR: AED 0.00
         </span>
       </div>
 
@@ -240,59 +178,15 @@ export function SalesInvoicesView() {
             </tr>
           </thead>
           <tbody>
-            {invoices.map((inv) => (
-              <tr
-                key={inv.no}
-                style={{
-                  borderBottom: '1px solid #1D2A44',
-                  transition: 'background-color 100ms ease',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(22, 34, 58, 0.5)')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <td style={{ padding: '10px 16px', fontFamily: 'monospace', color: '#DFBF6E', fontWeight: 600 }}>
-                  {inv.no}
-                </td>
-                <td style={{ padding: '10px 16px', color: '#F0F4FA', fontWeight: 500 }}>{inv.customer}</td>
-                <td style={{ padding: '10px 16px', color: '#8A97B2' }}>{inv.date}</td>
-                <td style={{ padding: '10px 16px', color: '#8A97B2' }}>{inv.due}</td>
-                <td
-                  style={{
-                    padding: '10px 16px',
-                    textAlign: 'end',
-                    fontFamily: 'monospace',
-                    fontWeight: 600,
-                    color: '#F0F4FA',
-                  }}
-                >
-                  {inv.total}
-                </td>
-                <td style={{ padding: '10px 16px', textAlign: 'center' }}>
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      backgroundColor:
-                        inv.status === 'SETTLED'
-                          ? 'rgba(47, 191, 143, 0.12)'
-                          : inv.status === 'PENDING'
-                          ? 'rgba(96, 165, 250, 0.12)'
-                          : 'rgba(236, 90, 96, 0.12)',
-                      color:
-                        inv.status === 'SETTLED'
-                          ? '#2FBF8F'
-                          : inv.status === 'PENDING'
-                          ? '#60A5FA'
-                          : '#EC5A60',
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {inv.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
+            <tr>
+              <td colSpan={6} style={{ padding: '40px 16px', textAlign: 'center', color: '#7E8DA6' }}>
+                <Receipt size={32} color="#C9A24B" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.7 }} />
+                <div style={{ fontWeight: 600, color: '#F0F4FA', marginBottom: '4px' }}>No Sales Invoices Recorded</div>
+                <div style={{ fontSize: '12px' }}>
+                  Accounts Receivable client invoicing and statutory VAT calculations will connect in Phase 2.
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -332,9 +226,9 @@ export function SettingsView() {
             <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#F0F4FA' }}>Company & Tenant Isolation</h3>
           </div>
           <div style={{ fontSize: '12px', color: '#8A97B2', lineHeight: '1.6' }}>
-            <div>Active Entity: <strong style={{ color: '#F0F4FA' }}>Barakah Enterprises LLC</strong></div>
-            <div>Tenant Code: <strong style={{ color: '#F0F4FA' }}>DXB-01 (Strict Isolation Enforced)</strong></div>
-            <div>Tax Registration Number: <strong style={{ color: '#F0F4FA' }}>100293847500003</strong></div>
+            <div>Active Entity: <strong style={{ color: '#F0F4FA' }}>Authorized Store Tenant</strong></div>
+            <div>Tenant Boundary: <strong style={{ color: '#F0F4FA' }}>Strict Isolation Enforced</strong></div>
+            <div>Statutory Tax Regime: <strong style={{ color: '#F0F4FA' }}>Configured per Country Pack</strong></div>
           </div>
         </div>
 
@@ -356,6 +250,218 @@ export function SettingsView() {
             <div>Double-Entry Enforcement: <strong style={{ color: '#2FBF8F' }}>Active & Verified</strong></div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function PurchasesView() {
+  const bills: Array<{ no: string; vendor: string; date: string; due: string; total: string; status: string }> = [];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#F0F4FA', letterSpacing: '-0.3px' }}>
+            Purchases & Expenses
+          </h1>
+          <p style={{ fontSize: '13px', color: '#8A97B2', marginTop: '2px' }}>
+            Vendor Bills, Accounts Payable & Statutory Expense Verification
+          </p>
+        </div>
+        <span
+          style={{
+            backgroundColor: 'rgba(201, 162, 75, 0.12)',
+            color: '#DFBF6E',
+            border: '1px solid rgba(201, 162, 75, 0.3)',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontSize: '12px',
+            fontWeight: 600,
+          }}
+        >
+          Total AP: AED 0.00
+        </span>
+      </div>
+
+      <div
+        style={{
+          backgroundColor: '#111A2E',
+          border: '1px solid #1D2A44',
+          borderRadius: '10px',
+          overflow: 'hidden',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+        }}
+      >
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#0E1626', borderBottom: '1px solid #1D2A44', color: '#7E8DA6' }}>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>BILL #</th>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>VENDOR</th>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>BILL DATE</th>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>DUE DATE</th>
+              <th style={{ padding: '10px 16px', textAlign: 'end' }}>TOTAL AMOUNT</th>
+              <th style={{ padding: '10px 16px', textAlign: 'center' }}>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan={6} style={{ padding: '40px 16px', textAlign: 'center', color: '#7E8DA6' }}>
+                <Receipt size={32} color="#C9A24B" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.7 }} />
+                <div style={{ fontWeight: 600, color: '#F0F4FA', marginBottom: '4px' }}>No Purchase Bills Recorded</div>
+                <div style={{ fontSize: '12px' }}>
+                  Vendor bills, statutory expense tracking, and Accounts Payable will connect in Phase 2.
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+export function ReportsView() {
+  const reports = [
+    { title: 'Trial Balance', desc: 'Summary of all debit and credit account balances to ensure fundamental double-entry equation balance.', freq: 'Real-time' },
+    { title: 'Statement of Profit or Loss (P&L)', desc: 'Operating revenue, Cost of Goods Sold (COGS), statutory depreciation, and net earnings.', freq: 'Monthly / Quarterly' },
+    { title: 'Balance Sheet (Statement of Financial Position)', desc: 'Total enterprise assets, current and non-current liabilities, and owner equity accounts.', freq: 'Quarterly / Annual' },
+    { title: 'Statement of Cash Flows', desc: 'Cash generated and utilized across operating, investing, and financing business operations.', freq: 'Quarterly' },
+    { title: 'UAE VAT 201 Return Summary', desc: 'Standard rated supplies (5%), reverse charge provisions, and recoverable input tax reconciliation.', freq: 'Tax Period' },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#F0F4FA', letterSpacing: '-0.3px' }}>
+            Financial Reports & Compliance
+          </h1>
+          <p style={{ fontSize: '13px', color: '#8A97B2', marginTop: '2px' }}>
+            Standard GAAP / IFRS Financial Statements & Statutory Tax Disclosures
+          </p>
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '16px',
+        }}
+      >
+        {reports.map((r) => (
+          <div
+            key={r.title}
+            style={{
+              backgroundColor: '#111A2E',
+              border: '1px solid #1D2A44',
+              borderRadius: '10px',
+              padding: '18px 20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '12px',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#F0F4FA' }}>{r.title}</h3>
+                <span style={{ fontSize: '11px', color: '#DFBF6E', backgroundColor: 'rgba(201, 162, 75, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
+                  {r.freq}
+                </span>
+              </div>
+              <p style={{ fontSize: '12px', color: '#8A97B2', lineHeight: '1.5' }}>{r.desc}</p>
+            </div>
+            <button
+              disabled
+              title="Reporting engine will activate in Phase 2"
+              style={{
+                alignSelf: 'flex-start',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: 600,
+                backgroundColor: '#16223A',
+                color: '#7E8DA6',
+                border: '1px solid #22304D',
+                cursor: 'not-allowed',
+                opacity: 0.7,
+              }}
+            >
+              Coming Soon (Phase 2)
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function TeamView() {
+  const members: Array<{ name: string; email: string; role: string; access: string; seat: string; status: string }> = [];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#F0F4FA', letterSpacing: '-0.3px' }}>
+            Team & Access Management
+          </h1>
+          <p style={{ fontSize: '13px', color: '#8A97B2', marginTop: '2px' }}>
+            Tenant Role-Based Access Control (RBAC), Seat Allocation & Branch Entitlements
+          </p>
+        </div>
+        <button
+          disabled
+          title="Team invitation UI will be connected in Phase A Group 2"
+          style={{
+            backgroundColor: 'rgba(201, 162, 75, 0.2)',
+            color: '#DFBF6E',
+            border: '1px solid rgba(201, 162, 75, 0.3)',
+            borderRadius: '6px',
+            padding: '8px 16px',
+            fontSize: '13px',
+            fontWeight: 700,
+            cursor: 'not-allowed',
+          }}
+        >
+          Invite Team Member
+        </button>
+      </div>
+
+      <div
+        style={{
+          backgroundColor: '#111A2E',
+          border: '1px solid #1D2A44',
+          borderRadius: '10px',
+          overflow: 'hidden',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+        }}
+      >
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#0E1626', borderBottom: '1px solid #1D2A44', color: '#7E8DA6' }}>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>MEMBER</th>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>EMAIL</th>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>TENANT ROLE</th>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>BRANCH PERMISSIONS</th>
+              <th style={{ padding: '10px 16px', textAlign: 'start' }}>SEAT TYPE</th>
+              <th style={{ padding: '10px 16px', textAlign: 'center' }}>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan={6} style={{ padding: '40px 16px', textAlign: 'center', color: '#7E8DA6' }}>
+                <Building2 size={32} color="#C9A24B" style={{ margin: '0 auto 10px', display: 'block', opacity: 0.7 }} />
+                <div style={{ fontWeight: 600, color: '#F0F4FA', marginBottom: '4px' }}>No External Team Members</div>
+                <div style={{ fontSize: '12px' }}>
+                  Use the invitation service to invite accountants, auditors, and administrators to this tenant.
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );

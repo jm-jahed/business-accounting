@@ -12,6 +12,7 @@ export interface DatabaseConfig {
   readonly maxPoolSize: number;
   readonly minPoolSize: number;
   readonly isProduction: boolean;
+  readonly isTestMode: boolean;
 }
 
 export class DatabaseConfigurationError extends Error {
@@ -19,6 +20,18 @@ export class DatabaseConfigurationError extends Error {
     super(`[DatabaseConfig] ${message}`);
     this.name = 'DatabaseConfigurationError';
     Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+/**
+ * Strict Safety Guard: Ensures tests only connect to dedicated test databases.
+ * Throws DatabaseConfigurationError if the database name does not end with "_test".
+ */
+export function assertTestDatabase(dbName?: string | null): void {
+  if (!dbName || !dbName.trim().endsWith('_test')) {
+    throw new DatabaseConfigurationError(
+      `Safety Violation: Database name must end with "_test" in test environments. Refusing connection to: "${dbName || ''}"`
+    );
   }
 }
 
@@ -85,7 +98,13 @@ export function loadDatabaseConfig(env: NodeJS.ProcessEnv = process.env): Databa
     );
   }
 
-  const dbName = env.DB_NAME?.trim() || 'business_accounting';
+  const isProduction = env.NODE_ENV === 'production';
+  const isTestMode = env.NODE_ENV === 'test' || env.TEST_MODE === 'true';
+  const dbName = env.DB_NAME?.trim() || (isTestMode ? 'business_accounting_test' : 'business_accounting');
+
+  if (isTestMode) {
+    assertTestDatabase(dbName);
+  }
 
   const parsePositiveInt = (val: string | undefined, fallback: number, name: string): number => {
     if (!val) return fallback;
@@ -96,7 +115,6 @@ export function loadDatabaseConfig(env: NodeJS.ProcessEnv = process.env): Databa
     return parsed;
   };
 
-  const isProduction = env.NODE_ENV === 'production';
   const serverSelectionTimeoutMS = parsePositiveInt(env.DB_SERVER_SELECTION_TIMEOUT_MS, 5000, 'DB_SERVER_SELECTION_TIMEOUT_MS');
   const connectTimeoutMS = parsePositiveInt(env.DB_CONNECT_TIMEOUT_MS, 10000, 'DB_CONNECT_TIMEOUT_MS');
   const socketTimeoutMS = parsePositiveInt(env.DB_SOCKET_TIMEOUT_MS, 45000, 'DB_SOCKET_TIMEOUT_MS');
@@ -112,5 +130,6 @@ export function loadDatabaseConfig(env: NodeJS.ProcessEnv = process.env): Databa
     maxPoolSize,
     minPoolSize,
     isProduction,
+    isTestMode,
   });
 }

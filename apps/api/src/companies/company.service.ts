@@ -14,6 +14,7 @@ import {
   CompanyInvitation,
   User,
   TenantContext,
+  assertEntityBelongsToTenant,
 } from '@accounting/database';
 import {
   CreateCompanyWithOnboardingInput,
@@ -22,6 +23,8 @@ import {
   InviteUserInputSchema,
   AcceptInvitationInput,
   AcceptInvitationInputSchema,
+  normalizeCompanySlug,
+  RESERVED_COMPANY_SLUGS,
 } from '@accounting/contracts';
 
 @Injectable()
@@ -32,9 +35,23 @@ export class CompanyService {
   ) {
     const input = CreateCompanyWithOnboardingSchema.parse(rawInput);
 
-    // 1. Create company record
+    // 1. Resolve and ensure unique store slug
+    let baseSlug = input.slug || normalizeCompanySlug(input.name);
+    if (!baseSlug || RESERVED_COMPANY_SLUGS.includes(baseSlug as any)) {
+      baseSlug = `${baseSlug || 'store'}-${Date.now().toString().slice(-4)}`;
+    }
+
+    let finalSlug = baseSlug;
+    let suffix = 1;
+    while (await Company.findOne({ slug: finalSlug })) {
+      finalSlug = `${baseSlug}-${suffix}`;
+      suffix++;
+    }
+
+    // 2. Create company record
     const company = await Company.create({
       name: input.name,
+      slug: finalSlug,
       legalName: input.legalName,
       taxId: input.taxId || '',
       trn: input.trn || '',
@@ -46,7 +63,7 @@ export class CompanyService {
       status: 'active',
     });
 
-    // 2. Automatically provision default 'Main Branch'
+    // 3. Automatically provision default 'Main Branch'
     const mainBranch = await Branch.create({
       companyId: company._id,
       code: 'MAIN',
@@ -55,7 +72,7 @@ export class CompanyService {
       status: 'active',
     });
 
-    // 3. Grant creator 'owner' membership with global branch access
+    // 4. Grant creator 'owner' membership with global branch access
     const membership = await CompanyMembership.create({
       userId,
       companyId: company._id,
@@ -68,6 +85,7 @@ export class CompanyService {
       company: {
         id: company._id.toString(),
         name: company.name,
+        slug: company.slug,
         legalName: company.legalName,
         currency: company.currency,
         countryCode: company.countryCode,
@@ -108,6 +126,7 @@ export class CompanyService {
         return {
           companyId: c._id.toString(),
           name: c.name,
+          slug: c.slug,
           legalName: c.legalName,
           currency: c.currency,
           countryCode: c.countryCode,
@@ -133,6 +152,10 @@ export class CompanyService {
     const branches = await Branch.find({
       companyId: new mongoose.Types.ObjectId(companyId),
     }).lean();
+
+    for (const b of branches) {
+      assertEntityBelongsToTenant(b, tenant.companyId, 'Branch');
+    }
 
     const memberships = await CompanyMembership.find({
       companyId: new mongoose.Types.ObjectId(companyId),
@@ -162,6 +185,7 @@ export class CompanyService {
       company: {
         id: company._id.toString(),
         name: company.name,
+        slug: company.slug,
         legalName: company.legalName,
         taxId: company.taxId,
         trn: company.trn,
@@ -190,6 +214,14 @@ export class CompanyService {
   ) {
     const input = InviteUserInputSchema.parse(rawInput);
     const compObjId = new mongoose.Types.ObjectId(companyId);
+
+    // Verify inviter membership belongs to the target company
+    const inviterMembership = await CompanyMembership.findOne({
+      companyId: compObjId,
+      userId: inviterId,
+      status: 'active',
+    }).lean();
+    assertEntityBelongsToTenant(inviterMembership, companyId, 'Inviter membership');
 
     // Check if user already exists and is already member
     const existingUser = await User.findOne({ email: input.email }).lean();
@@ -257,6 +289,14 @@ export class CompanyService {
     if (!invitation) {
       throw new NotFoundException('Invitation not found or has expired.');
     }
+
+    // Verify target company existence and tenant integrity
+    const targetCompany = await Company.findById(invitation.companyId).lean();
+    assertEntityBelongsToTenant(
+      targetCompany ? { companyId: targetCompany._id } : null,
+      invitation.companyId.toString(),
+      'Target company'
+    );
 
     // Find or create user
     let user = await User.findOne({ email: invitation.email });

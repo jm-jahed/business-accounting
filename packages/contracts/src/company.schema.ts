@@ -15,7 +15,10 @@ export type SubscriptionStatus = z.infer<typeof SubscriptionStatusEnum>;
 export const SeatTypeEnum = z.enum(['full', 'read_only']);
 export type SeatType = z.infer<typeof SeatTypeEnum>;
 
+import { CompanySlugSchema } from './slug.schema.js';
+
 export const CompanyInputSchema = z.object({
+  slug: CompanySlugSchema,
   name: z.string().trim().min(2, 'Company name must be at least 2 characters').max(100),
   legalName: z.string().trim().min(2, 'Legal name must be at least 2 characters').max(150),
   taxId: z.string().trim().max(50).optional(),

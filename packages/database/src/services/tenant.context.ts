@@ -4,6 +4,7 @@ import { CompanyMemberRole } from '../models/CompanyMembership.js';
 export interface TenantContext {
   readonly userId: string;
   readonly companyId: string;
+  readonly companySlug?: string;
   readonly role: CompanyMemberRole;
   readonly branchId?: string | null;
   readonly branchAccess?: string[] | 'all';
@@ -56,4 +57,24 @@ export function createTenantScopedFilter<T extends Record<string, any>>(
     ...filter,
     companyId: new mongoose.Types.ObjectId(context.companyId),
   };
+}
+
+/**
+ * Asserts that a foreign document / reference belongs to the authorized tenant company.
+ * Throws TenantAuthorizationError if the document does not exist or its companyId does not match.
+ */
+export function assertEntityBelongsToTenant<T extends { companyId?: any }>(
+  entity: T | null | undefined,
+  expectedCompanyId: string,
+  entityName = 'Entity'
+): asserts entity is T {
+  if (!entity) {
+    throw new TenantAuthorizationError(`${entityName} not found.`);
+  }
+  const entityCompanyId = entity.companyId?.toString ? entity.companyId.toString() : String(entity.companyId);
+  if (entityCompanyId !== expectedCompanyId) {
+    throw new TenantAuthorizationError(
+      `Cross-tenant integrity violation: ${entityName} does not belong to authorized company.`
+    );
+  }
 }

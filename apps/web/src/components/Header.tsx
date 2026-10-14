@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Building2,
@@ -11,28 +9,35 @@ import {
   Menu,
   CheckCircle2,
   Info,
+  LogOut,
 } from 'lucide-react';
 import { useI18n } from '../i18n/context';
+import { useAuth } from '../contexts/AuthContext';
 import { LanguageSelector, CurrencySelector } from './LanguageCurrencySelector';
 import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
+  storeSlug?: string;
   onOpenMobile: () => void;
   selectedCompany: string;
-  onSelectCompany: (company: string) => void;
+  onSelectCompany: (company: string, slug?: string) => void;
+  companiesList?: Array<{ name: string; slug: string; branch?: string; trn?: string }>;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onOpenCommandPalette?: () => void;
 }
 
 export function Header({
+  storeSlug: _storeSlug,
   onOpenMobile,
   selectedCompany,
   onSelectCompany,
+  companiesList,
   searchQuery,
   onSearchChange,
   onOpenCommandPalette,
 }: HeaderProps) {
+  const { user, logout } = useAuth();
   const [showCompanyMenu, setShowCompanyMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -59,10 +64,8 @@ export function Header({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const sampleCompanies = [
-    { name: 'Barakah Enterprises LLC', branch: 'Main Branch (DXB-01)', trn: '100293847500003' },
-    { name: 'Emirates General Trading LLC', branch: 'Sharjah Facility', trn: '100349821100003' },
-    { name: 'WebStudio Technologies FZ-LLC', branch: 'RAK Freezone', trn: '100119283400003' },
+  const companies = companiesList && companiesList.length > 0 ? companiesList : [
+    { name: selectedCompany, slug: _storeSlug || 'store', branch: 'Authorized Entity', trn: 'Active Boundary' },
   ];
 
   return (
@@ -156,13 +159,13 @@ export function Header({
                   marginBottom: '4px',
                 }}
               >
-                {dict.header.selectCompanyDemo}
+                ACTIVE STORE / TENANT ENTITY
               </div>
-              {sampleCompanies.map((c) => (
+              {companies.map((c) => (
                 <div
                   key={c.name}
                   onClick={() => {
-                    onSelectCompany(c.name);
+                    onSelectCompany(c.name, c.slug);
                     setShowCompanyMenu(false);
                   }}
                   style={{
@@ -385,7 +388,9 @@ export function Header({
             >
               <User size={14} color="#C9A24B" />
             </div>
-            <span style={{ fontSize: '12px', fontWeight: 600 }}>Jahed</span>
+            <span style={{ fontSize: '12px', fontWeight: 600 }}>
+              {user?.fullName?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
+            </span>
             <ChevronDown size={12} color="#8A97B2" />
           </button>
 
@@ -395,27 +400,52 @@ export function Header({
                 position: 'absolute',
                 top: 'calc(100% + 6px)',
                 insetInlineEnd: 0,
-                width: '220px',
+                width: '240px',
                 backgroundColor: '#16223A',
                 border: '1px solid #22304D',
                 borderRadius: '8px',
                 boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-                padding: '10px',
+                padding: '12px',
                 zIndex: 40,
               }}
             >
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#E6EAF2' }}>Jahed Chowdhury</div>
-              <div style={{ fontSize: '11px', color: '#8A97B2' }}>{dict.header.userRole}</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#E6EAF2' }}>
+                {user?.fullName || 'User'}
+              </div>
+              <div style={{ fontSize: '11px', color: '#8A97B2', wordBreak: 'break-all' }}>{user?.email}</div>
               <div
                 style={{
-                  marginTop: '8px',
-                  paddingTop: '8px',
+                  marginTop: '10px',
+                  paddingTop: '10px',
                   borderTop: '1px solid #22304D',
-                  fontSize: '11px',
-                  color: '#8A97B2',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
                 }}
               >
-                {dict.header.sessionActive}
+                <div style={{ fontSize: '11px', color: '#2FBF8F', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <CheckCircle2 size={12} />
+                  <span>{dict.header.sessionActive}</span>
+                </div>
+                <button
+                  onClick={() => logout()}
+                  style={{
+                    width: '100%',
+                    background: 'none',
+                    border: 'none',
+                    color: '#EC5A60',
+                    fontSize: '12px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 0',
+                  }}
+                >
+                  <LogOut size={13} />
+                  <span>Sign Out</span>
+                </button>
               </div>
             </div>
           )}

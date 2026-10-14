@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { loadApiConfig } from '../config/api.config.js';
 import { HealthService } from '../health/health.service.js';
+import { createCorsOptions } from '../main.js';
 
 describe('API Foundation & Health Suite', () => {
   it('should load default API configuration with safe defaults', () => {
@@ -41,5 +42,44 @@ describe('API Foundation & Health Suite', () => {
     assert(result.database, 'Database health section must be present');
     assert(typeof result.database.connected === 'boolean');
     assert(result.timestamp, 'Timestamp must be present');
+  });
+
+  it('should configure CORS with credentials, strict origins, and x-client-type in allowedHeaders for preflight', () => {
+    const config = loadApiConfig({});
+    const cors = createCorsOptions(config);
+
+    assert.equal(cors.credentials, true, 'CORS must enforce credentials: true for cookies');
+    assert(cors.methods.includes('OPTIONS'), 'CORS must explicitly allow OPTIONS for preflight');
+    assert(cors.allowedHeaders.includes('x-client-type'), 'allowedHeaders must include x-client-type');
+    assert(cors.allowedHeaders.includes('X-Client-Type'), 'allowedHeaders must include X-Client-Type');
+    assert(cors.allowedHeaders.includes('x-csrf-token'), 'allowedHeaders must include x-csrf-token');
+    assert(cors.allowedHeaders.includes('X-CSRF-Token'), 'allowedHeaders must include X-CSRF-Token');
+
+    // Test origin callback for permitted origins
+    let allowed: boolean | undefined = false;
+    cors.origin('http://localhost:3000', (err, ok) => {
+      assert.equal(err, null);
+      allowed = ok;
+    });
+    assert.equal(allowed, true);
+
+    cors.origin('https://acc.webstudioae.com', (err, ok) => {
+      assert.equal(err, null);
+      allowed = ok;
+    });
+    assert.equal(allowed, true);
+
+    // Test non-browser client (origin undefined)
+    cors.origin(undefined, (err, ok) => {
+      assert.equal(err, null);
+      allowed = ok;
+    });
+    assert.equal(allowed, true);
+
+    // Test unauthorized cross-origin client
+    cors.origin('https://malicious.attacker.com', (err) => {
+      assert.ok(err, 'Unauthorized origin must return an error');
+      assert.match(err!.message, /CORS blocked/);
+    });
   });
 });

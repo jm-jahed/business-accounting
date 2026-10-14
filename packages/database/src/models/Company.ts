@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import { normalizeCompanySlug } from '@accounting/contracts';
 
 export interface ICompany extends Document {
   name: string;
+  slug: string;
   legalName: string;
   taxId?: string;
   trn?: string;
@@ -13,6 +15,7 @@ export interface ICompany extends Document {
   plan: string;
   subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled';
   seatLimit: number;
+  allocatedFullSeats: number;
   trialEndsAt?: Date;
   entitlements: string[];
   status: 'active' | 'suspended' | 'archived';
@@ -29,6 +32,19 @@ const CompanySchema = new Schema<ICompany>(
       minlength: [2, 'Company name must be at least 2 characters'],
       maxlength: [100, 'Company name cannot exceed 100 characters'],
       index: true,
+    },
+    slug: {
+      type: String,
+      required: [true, 'Store slug is required'],
+      unique: true,
+      trim: true,
+      lowercase: true,
+      minlength: [3, 'Store slug must be at least 3 characters'],
+      maxlength: [63, 'Store slug cannot exceed 63 characters'],
+      index: true,
+      default: function (this: any) {
+        return this.name ? normalizeCompanySlug(this.name) : undefined;
+      },
     },
     legalName: {
       type: String,
@@ -100,6 +116,12 @@ const CompanySchema = new Schema<ICompany>(
       default: 3,
       min: 1,
     },
+    allocatedFullSeats: {
+      type: Number,
+      default: 1,
+      min: 0,
+      index: true,
+    },
     trialEndsAt: {
       type: Date,
       default: null,
@@ -120,6 +142,13 @@ const CompanySchema = new Schema<ICompany>(
     collection: 'companies',
   }
 );
+
+CompanySchema.pre('validate', function (next) {
+  if (!this.slug && this.name) {
+    this.slug = normalizeCompanySlug(this.name);
+  }
+  next();
+});
 
 export const Company: Model<ICompany> =
   mongoose.models.Company || mongoose.model<ICompany>('Company', CompanySchema);

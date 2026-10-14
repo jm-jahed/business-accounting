@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   BookOpen,
@@ -16,18 +18,21 @@ import {
   PanelLeft,
   LogOut,
   User,
+  Users,
 } from 'lucide-react';
 import { SystemStatusBadge } from './SystemStatusBadge';
 import { useI18n } from '../i18n/context';
 
 interface SidebarProps {
+  storeSlug?: string;
   activeTab: string;
-  onTabChange: (tabId: string) => void;
+  onTabChange?: (tabId: string) => void;
   mobileOpen: boolean;
   onCloseMobile: () => void;
 }
 
-export function Sidebar({ activeTab, onTabChange, mobileOpen, onCloseMobile }: SidebarProps) {
+export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onCloseMobile }: SidebarProps) {
+  const router = useRouter();
   const { dict } = useI18n();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -36,7 +41,7 @@ export function Sidebar({ activeTab, onTabChange, mobileOpen, onCloseMobile }: S
       title: dict.nav.coreFinancials,
       items: [
         { id: 'dashboard', label: dict.nav.dashboard, icon: <LayoutDashboard size={18} /> },
-        { id: 'coa', label: dict.nav.chartOfAccounts, icon: <Layers size={18} /> },
+        { id: 'accounts', label: dict.nav.chartOfAccounts, icon: <Layers size={18} /> },
         { id: 'ledger', label: dict.nav.generalLedger, icon: <BookOpen size={18} /> },
       ],
     },
@@ -44,7 +49,7 @@ export function Sidebar({ activeTab, onTabChange, mobileOpen, onCloseMobile }: S
       title: dict.nav.operations,
       items: [
         { id: 'sales', label: dict.nav.salesInvoices, icon: <Receipt size={18} /> },
-        { id: 'bills', label: dict.nav.purchasesExpenses, icon: <CreditCard size={18} /> },
+        { id: 'purchases', label: dict.nav.purchasesExpenses, icon: <CreditCard size={18} /> },
         { id: 'banking', label: dict.nav.cashBanking, icon: <Landmark size={18} /> },
       ],
     },
@@ -52,7 +57,7 @@ export function Sidebar({ activeTab, onTabChange, mobileOpen, onCloseMobile }: S
       title: dict.nav.reportsAndAudit,
       items: [
         { id: 'reports', label: dict.nav.financialReports, icon: <FileSpreadsheet size={18} /> },
-        { id: 'audit', label: dict.nav.auditTrail, icon: <ShieldCheck size={18} /> },
+        { id: 'team', label: 'Team & Access', icon: <Users size={18} /> },
         { id: 'settings', label: dict.nav.settings, icon: <Settings size={18} /> },
       ],
     },
@@ -207,48 +212,63 @@ export function Sidebar({ activeTab, onTabChange, mobileOpen, onCloseMobile }: S
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                 {section.items.map((item) => {
                   const active = activeTab === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        onTabChange(item.id);
-                        onCloseMobile();
-                      }}
-                      title={isCollapsed ? item.label : undefined}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: isCollapsed ? 'center' : 'flex-start',
-                        gap: '10px',
-                        width: '100%',
-                        padding: isCollapsed ? '9px 0' : '8px 12px',
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        fontWeight: active ? 600 : 500,
-                        color: active ? '#F0F4FA' : '#8A97B2',
-                        backgroundColor: active ? '#16223A' : 'transparent',
-                        border: active ? '1px solid #22304D' : '1px solid transparent',
-                        borderInlineStart: active ? '3px solid #C9A24B' : '3px solid transparent',
-                        textAlign: 'start',
-                        transition: 'all 120ms ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!active) {
-                          e.currentTarget.style.backgroundColor = 'rgba(22, 34, 58, 0.5)';
-                          e.currentTarget.style.color = '#F0F4FA';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!active) {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = '#8A97B2';
-                        }
-                      }}
-                    >
+                  const itemStyle: React.CSSProperties = {
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    gap: '10px',
+                    width: '100%',
+                    padding: isCollapsed ? '9px 0' : '8px 12px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: active ? 600 : 500,
+                    color: active ? '#F0F4FA' : '#8A97B2',
+                    backgroundColor: active ? '#16223A' : 'transparent',
+                    border: active ? '1px solid #22304D' : '1px solid transparent',
+                    borderInlineStart: active ? '3px solid #C9A24B' : '3px solid transparent',
+                    textAlign: 'start',
+                    textDecoration: 'none',
+                    transition: 'all 120ms ease',
+                    cursor: 'pointer',
+                  };
+
+                  const innerContent = (
+                    <>
                       <span style={{ color: active ? '#C9A24B' : '#7E8DA6', display: 'flex' }}>
                         {item.icon}
                       </span>
                       {!isCollapsed && <span>{item.label}</span>}
+                    </>
+                  );
+
+                  if (storeSlug) {
+                    return (
+                      <Link
+                        key={item.id}
+                        href={`/${storeSlug}/${item.id}`}
+                        onClick={() => {
+                          onTabChange?.(item.id);
+                          onCloseMobile();
+                        }}
+                        title={isCollapsed ? item.label : undefined}
+                        style={itemStyle}
+                      >
+                        {innerContent}
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        onTabChange?.(item.id);
+                        onCloseMobile();
+                      }}
+                      title={isCollapsed ? item.label : undefined}
+                      style={itemStyle}
+                    >
+                      {innerContent}
                     </button>
                   );
                 })}
@@ -283,19 +303,19 @@ export function Sidebar({ activeTab, onTabChange, mobileOpen, onCloseMobile }: S
                     flexShrink: 0,
                   }}
                 >
-                  J
+                  U
                 </div>
                 <div style={{ overflow: 'hidden' }}>
                   <div style={{ fontSize: '12px', fontWeight: 600, color: '#F0F4FA', whiteSpace: 'nowrap' }}>
-                    Jahed
+                    Authorized User
                   </div>
                   <div style={{ fontSize: '10px', color: '#7E8DA6', whiteSpace: 'nowrap' }}>
-                    Tenant DXB-01
+                    /{storeSlug || 'store'}
                   </div>
                 </div>
               </div>
               <button
-                onClick={() => alert('Logout is handled via session authentication in production.')}
+                onClick={() => router.push('/login')}
                 title="Logout"
                 style={{
                   background: 'none',

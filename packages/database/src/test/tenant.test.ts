@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import {
   validateTenantAccess,
   createTenantScopedFilter,
+  assertEntityBelongsToTenant,
   TenantAuthorizationError,
   TenantContext,
 } from '../services/tenant.context.js';
@@ -72,10 +73,50 @@ describe('Tenant Boundaries & Isolation Suite', () => {
     assert.notEqual(securedFilter.companyId.toString(), companyBId);
     assert.equal(securedFilter.code, '1010');
   });
+
+  it('assertEntityBelongsToTenant should allow related entities belonging to the same company', () => {
+    const accountInCompanyA = {
+      _id: new Types.ObjectId(),
+      companyId: new Types.ObjectId(companyAId),
+      name: 'Cash on Hand',
+    };
+
+    assert.doesNotThrow(() => {
+      assertEntityBelongsToTenant(accountInCompanyA, companyAId, 'Account');
+    });
+  });
+
+  it('assertEntityBelongsToTenant should reject cross-company entity references (Company B entity in Company A)', () => {
+    const accountInCompanyB = {
+      _id: new Types.ObjectId(),
+      companyId: new Types.ObjectId(companyBId),
+      name: 'Petty Cash Company B',
+    };
+
+    assert.throws(
+      () => assertEntityBelongsToTenant(accountInCompanyB, companyAId, 'Account'),
+      (err: any) => {
+        assert(err instanceof TenantAuthorizationError);
+        assert(err.message.includes('Cross-tenant integrity violation'));
+        return true;
+      }
+    );
+  });
+
+  it('assertEntityBelongsToTenant should fail closed if entity is missing or null', () => {
+    assert.throws(
+      () => assertEntityBelongsToTenant(null, companyAId, 'Customer'),
+      (err: any) => {
+        assert(err instanceof TenantAuthorizationError);
+        assert(err.message.includes('Customer not found'));
+        return true;
+      }
+    );
+  });
 });
 
 describe('Company and Branch Model Schema Validation Suite', () => {
-  it('should successfully validate a well-formed Company document', () => {
+  it('should successfully validate a well-formed Company document and auto-derive slug', () => {
     const company = new Company({
       name: 'Al-Barakah Trading LLC',
       legalName: 'Al-Barakah General Trading LLC',
@@ -87,6 +128,22 @@ describe('Company and Branch Model Schema Validation Suite', () => {
 
     const err = company.validateSync();
     assert.equal(err, undefined);
+    assert.equal(company.slug, 'al-barakah-trading-llc');
+  });
+
+  it('should respect explicitly provided valid slug on Company document', () => {
+    const company = new Company({
+      name: 'Al-Barakah Trading LLC',
+      slug: 'custom-barakah-store',
+      legalName: 'Al-Barakah General Trading LLC',
+      currency: 'AED',
+      fiscalYearStartMonth: 1,
+      status: 'active',
+    });
+
+    const err = company.validateSync();
+    assert.equal(err, undefined);
+    assert.equal(company.slug, 'custom-barakah-store');
   });
 
   it('should reject Company with missing required fields or invalid currency length', () => {

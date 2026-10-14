@@ -13,6 +13,8 @@ export * from './models/Branch.js';
 export * from './models/CompanyMembership.js';
 export * from './models/CompanyInvitation.js';
 export * from './models/Account.js';
+export * from './models/AuditLog.js';
+export * from './models/UserSession.js';
 
 // Domain Services & Multi-Tenant Boundaries
 export * from './services/tenant.context.js';
