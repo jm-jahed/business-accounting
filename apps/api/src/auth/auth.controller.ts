@@ -15,7 +15,13 @@ import { AuthService, ClientSessionMetadata } from './auth.service.js';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
 import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 import { JwtUserPayload } from './jwt.service.js';
-import { RegisterUserInput, LoginInput, RefreshTokenInput } from '@accounting/contracts';
+import {
+  RegisterUserInput,
+  LoginInput,
+  RefreshTokenInput,
+  GoogleAuthInput,
+  GoogleLinkAccountInput,
+} from '@accounting/contracts';
 
 function setAuthCookies(
   res: Response,
@@ -74,10 +80,27 @@ function clearAuthCookies(res: Response) {
   });
 }
 
+function extractClientIp(req: Request): string {
+  const forwarded = req.headers['x-forwarded-for'];
+  let rawIp = '';
+  if (Array.isArray(forwarded)) {
+    rawIp = forwarded[0] || '';
+  } else if (typeof forwarded === 'string') {
+    rawIp = forwarded.split(',')[0].trim();
+  }
+  if (!rawIp) {
+    rawIp = req.socket?.remoteAddress || req.ip || '';
+  }
+  if (rawIp.startsWith('::ffff:')) {
+    rawIp = rawIp.slice(7);
+  }
+  return rawIp.trim();
+}
+
 function extractMetadata(req: Request): ClientSessionMetadata {
   return {
-    ipAddress: (req.headers['x-forwarded-for'] as string) || req.socket?.remoteAddress || req.ip || '',
-    userAgent: req.headers['user-agent'] || '',
+    ipAddress: extractClientIp(req),
+    userAgent: (req.headers['user-agent'] as string) || '',
   };
 }
 
@@ -120,6 +143,32 @@ export class AuthController {
   ) {
     const metadata = extractMetadata(req);
     const result = await this.authService.login(body, metadata);
+    setAuthCookies(res, result);
+    return sanitizeResponseForClient(req, result);
+  }
+
+  @Post('google')
+  @HttpCode(HttpStatus.OK)
+  async googleLogin(
+    @Body() body: GoogleAuthInput,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const metadata = extractMetadata(req);
+    const result = await this.authService.loginWithGoogle(body, metadata);
+    setAuthCookies(res, result);
+    return sanitizeResponseForClient(req, result);
+  }
+
+  @Post('google/link')
+  @HttpCode(HttpStatus.OK)
+  async googleLink(
+    @Body() body: GoogleLinkAccountInput,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const metadata = extractMetadata(req);
+    const result = await this.authService.linkGoogleAccount(body, metadata);
     setAuthCookies(res, result);
     return sanitizeResponseForClient(req, result);
   }

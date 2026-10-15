@@ -3,6 +3,8 @@ import {
   ConflictException,
   UnauthorizedException,
   NotFoundException,
+  HttpException,
+  HttpStatus,
   OnModuleDestroy,
 } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
@@ -14,8 +16,13 @@ import {
   RegisterUserInputSchema,
   LoginInput,
   LoginInputSchema,
+  GoogleAuthInput,
+  GoogleAuthInputSchema,
+  GoogleLinkAccountInput,
+  GoogleLinkAccountInputSchema,
 } from '@accounting/contracts';
 import { JwtService, JwtUserPayload, JwtRefreshPayload } from './jwt.service.js';
+import { GoogleAuthService } from './google-auth.service.js';
 
 export interface ClientSessionMetadata {
   ipAddress?: string;
@@ -40,6 +47,9 @@ export interface ActiveSessionRotation {
 @Injectable()
 export class AuthService implements OnModuleDestroy {
   public static readonly DEFAULT_MAX_CACHE_SIZE = 5000;
+  public static readonly ACCOUNT_LINK_MAX_ATTEMPTS = 5;
+  public static readonly ACCOUNT_LINK_WINDOW_MS = 60 * 1000; // 60 seconds
+
   private maxCacheSize = AuthService.DEFAULT_MAX_CACHE_SIZE;
   private cleanupTimer: NodeJS.Timeout | null = null;
 
@@ -50,7 +60,14 @@ export class AuthService implements OnModuleDestroy {
   // Ensures race conditions/retries return the IDENTICAL active token pair without conflicting token churn
   private readonly recentRotations = new Map<string, ActiveSessionRotation>();
 
-  constructor(private readonly jwtService: JwtService) {
+  // 3. Sliding-window failure tracker for Google account-linking attempts:
+  // Key format: `${email.toLowerCase()}:${clientIp.toLowerCase()}` -> timestamps[] of failed password checks
+  private readonly accountLinkFailures = new Map<string, number[]>();
+
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly googleAuthService: GoogleAuthService = new GoogleAuthService()
+  ) {
     this.cleanupTimer = setInterval(() => {
       this.pruneExpiredRotations();
     }, 60000);
@@ -66,6 +83,7 @@ export class AuthService implements OnModuleDestroy {
     }
     this.recentRotations.clear();
     this.inFlightRefreshes.clear();
+    this.accountLinkFailures.clear();
   }
 
   public pruneExpiredRotations(now: number = Date.now()): number {
@@ -76,7 +94,53 @@ export class AuthService implements OnModuleDestroy {
         pruned++;
       }
     }
+    for (const [key, timestamps] of this.accountLinkFailures.entries()) {
+      const valid = timestamps.filter((ts) => now - ts < AuthService.ACCOUNT_LINK_WINDOW_MS);
+      if (valid.length === 0) {
+        this.accountLinkFailures.delete(key);
+      } else if (valid.length !== timestamps.length) {
+        this.accountLinkFailures.set(key, valid);
+      }
+    }
     return pruned;
+  }
+
+  private checkAccountLinkRateLimit(key: string, now: number = Date.now()): void {
+    const attempts = this.accountLinkFailures.get(key);
+    if (!attempts || attempts.length === 0) return;
+
+    const validAttempts = attempts.filter((ts) => now - ts < AuthService.ACCOUNT_LINK_WINDOW_MS);
+    if (validAttempts.length >= AuthService.ACCOUNT_LINK_MAX_ATTEMPTS) {
+      throw new HttpException(
+        'Too many failed account-linking attempts. Please wait a minute before trying again.',
+        HttpStatus.TOO_MANY_REQUESTS
+      );
+    }
+  }
+
+  private recordAccountLinkFailure(key: string, now: number = Date.now()): void {
+    const attempts = this.accountLinkFailures.get(key) || [];
+    const validAttempts = attempts.filter((ts) => now - ts < AuthService.ACCOUNT_LINK_WINDOW_MS);
+    validAttempts.push(now);
+
+    if (this.accountLinkFailures.size >= this.maxCacheSize && !this.accountLinkFailures.has(key)) {
+      const oldestKey = this.accountLinkFailures.keys().next().value;
+      if (oldestKey) this.accountLinkFailures.delete(oldestKey);
+    }
+
+    this.accountLinkFailures.set(key, validAttempts);
+  }
+
+  private resetAccountLinkFailures(key: string): void {
+    this.accountLinkFailures.delete(key);
+  }
+
+  public getAccountLinkFailuresForTesting(key: string): number[] | undefined {
+    return this.accountLinkFailures.get(key);
+  }
+
+  public resetAccountLinkFailuresForTesting(): void {
+    this.accountLinkFailures.clear();
   }
 
   public setMaxCacheSizeForTesting(size: number): void {
@@ -181,6 +245,10 @@ export class AuthService implements OnModuleDestroy {
 
     if (user.status !== 'active') {
       throw new UnauthorizedException('This account has been suspended. Please contact support.');
+    }
+
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('This account was registered using Google Sign-In. Please sign in with Google.');
     }
 
     const isMatch = await bcrypt.compare(input.password, user.passwordHash);
@@ -594,4 +662,199 @@ export class AuthService implements OnModuleDestroy {
       companies: userCompanies,
     };
   }
+
+  public setGoogleAuthService(service: GoogleAuthService): void {
+    (this as any).googleAuthService = service;
+  }
+
+  public async loginWithGoogle(rawInput: GoogleAuthInput, metadata?: ClientSessionMetadata) {
+    const input = GoogleAuthInputSchema.parse(rawInput);
+    const googleUser = await this.googleAuthService.verifyIdToken(input.idToken);
+
+    // 1. Check if user already exists with this exact Google ID
+    let user = await User.findOne({ googleId: googleUser.googleId });
+
+    if (!user) {
+      // 2. Check if an account already exists with this email
+      const existingByEmail = await User.findOne({ email: googleUser.email });
+      if (existingByEmail) {
+        // Strict Account Linking Security: Never automatically link!
+        // Require explicit password authentication to link.
+        throw new ConflictException({
+          code: 'ACCOUNT_EXISTS_LINK_REQUIRED',
+          message: 'An account with this email already exists. Please verify your password to link your Google identity.',
+          email: googleUser.email,
+        });
+      }
+
+      // 3. Brand-new user registration via Google OAuth
+      user = await User.create({
+        email: googleUser.email,
+        fullName: googleUser.fullName,
+        avatarUrl: googleUser.avatarUrl || '',
+        googleId: googleUser.googleId,
+        authProvider: 'google',
+        status: 'active',
+        lastLoginAt: new Date(),
+      });
+    }
+
+    if (user.status !== 'active') {
+      throw new UnauthorizedException('This account has been suspended. Please contact support.');
+    }
+
+    user.lastLoginAt = new Date();
+    if (googleUser.avatarUrl && !user.avatarUrl) {
+      user.avatarUrl = googleUser.avatarUrl;
+    }
+    await user.save();
+
+    // 4. Issue standard session
+    const sessionFamily = crypto.randomUUID();
+    const payload: JwtUserPayload = {
+      sub: user._id.toString(),
+      email: user.email,
+      fullName: user.fullName,
+      sessionFamily,
+    };
+
+    const refreshPayload: JwtRefreshPayload = {
+      sub: user._id.toString(),
+      email: user.email,
+      fullName: user.fullName,
+      sessionFamily,
+    };
+
+    const accessToken = this.jwtService.signAccessToken(payload);
+    const refreshToken = this.jwtService.signRefreshToken(refreshPayload);
+
+    const refreshTokenHash = this.jwtService.hashToken(refreshToken);
+    await UserSession.create({
+      userId: user._id,
+      sessionFamily,
+      refreshTokenHash,
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      isRevoked: false,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    const csrfToken = this.jwtService.generateCsrfToken();
+
+    return {
+      accessToken,
+      refreshToken,
+      csrfToken,
+      sessionFamily,
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        fullName: user.fullName,
+        phone: user.phone || '',
+        avatarUrl: user.avatarUrl || '',
+        status: user.status,
+      },
+    };
+  }
+
+  public async linkGoogleAccount(rawInput: GoogleLinkAccountInput, metadata?: ClientSessionMetadata) {
+    const input = GoogleLinkAccountInputSchema.parse(rawInput);
+    const googleUser = await this.googleAuthService.verifyIdToken(input.idToken);
+
+    // 1. Locate existing account by email
+    const user = await User.findOne({ email: googleUser.email });
+    if (!user) {
+      throw new NotFoundException('Account not found for the provided Google email.');
+    }
+
+    if (user.status !== 'active') {
+      throw new UnauthorizedException('This account has been suspended. Please contact support.');
+    }
+
+    // 2. Prevent one Google identity from being linked to multiple users
+    const existingWithGoogleId = await User.findOne({ googleId: googleUser.googleId });
+    if (existingWithGoogleId && existingWithGoogleId._id.toString() !== user._id.toString()) {
+      throw new ConflictException('This Google account is already linked to another user.');
+    }
+
+    if (user.googleId && user.googleId !== googleUser.googleId) {
+      throw new ConflictException('This account is already linked to a different Google identity.');
+    }
+
+    // 3. Rate limiting check before expensive password hash comparison
+    const clientIp = metadata?.ipAddress?.trim() || 'unknown';
+    const rateLimitKey = `${user.email.toLowerCase()}:${clientIp.toLowerCase()}`;
+    this.checkAccountLinkRateLimit(rateLimitKey);
+
+    // 4. Verify user password before linking
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('This account does not have a local password configured.');
+    }
+
+    const isMatch = await bcrypt.compare(input.password, user.passwordHash);
+    if (!isMatch) {
+      this.recordAccountLinkFailure(rateLimitKey);
+      throw new UnauthorizedException('Invalid password. Account linking rejected.');
+    }
+
+    // Reset failure counter on successful password verification
+    this.resetAccountLinkFailures(rateLimitKey);
+
+    // 5. Securely link Google Identity
+    user.googleId = googleUser.googleId;
+    user.authProvider = 'both';
+    user.lastLoginAt = new Date();
+    if (googleUser.avatarUrl && !user.avatarUrl) {
+      user.avatarUrl = googleUser.avatarUrl;
+    }
+    await user.save();
+
+    // 5. Establish session
+    const sessionFamily = crypto.randomUUID();
+    const payload: JwtUserPayload = {
+      sub: user._id.toString(),
+      email: user.email,
+      fullName: user.fullName,
+      sessionFamily,
+    };
+
+    const refreshPayload: JwtRefreshPayload = {
+      sub: user._id.toString(),
+      email: user.email,
+      fullName: user.fullName,
+      sessionFamily,
+    };
+
+    const accessToken = this.jwtService.signAccessToken(payload);
+    const refreshToken = this.jwtService.signRefreshToken(refreshPayload);
+
+    const refreshTokenHash = this.jwtService.hashToken(refreshToken);
+    await UserSession.create({
+      userId: user._id,
+      sessionFamily,
+      refreshTokenHash,
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      isRevoked: false,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    const csrfToken = this.jwtService.generateCsrfToken();
+
+    return {
+      accessToken,
+      refreshToken,
+      csrfToken,
+      sessionFamily,
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        fullName: user.fullName,
+        phone: user.phone || '',
+        avatarUrl: user.avatarUrl || '',
+        status: user.status,
+      },
+    };
+  }
 }
+

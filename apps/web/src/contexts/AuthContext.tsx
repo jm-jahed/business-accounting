@@ -12,6 +12,8 @@ export interface AuthContextType {
   error: string | null;
   isAuthenticated: boolean;
   login: (credentials: LoginInput, redirectTarget?: string | null) => Promise<void>;
+  loginWithGoogle: (idToken: string, redirectTarget?: string | null) => Promise<void>;
+  linkGoogleAccount: (idToken: string, password: string, redirectTarget?: string | null) => Promise<void>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<void>;
   clearError: () => void;
@@ -54,6 +56,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refreshSession();
   }, [refreshSession]);
 
+  const handlePostAuthRedirect = (meData: any, redirectTarget?: string | null) => {
+    const safeRedirect = sanitizeRedirectUrl(redirectTarget);
+    if (safeRedirect && !safeRedirect.startsWith('/login') && !safeRedirect.startsWith('/onboarding')) {
+      router.push(safeRedirect);
+      return;
+    }
+
+    if (meData.companies && meData.companies.length > 0) {
+      const primaryStore = meData.companies[0].slug;
+      router.push(`/${primaryStore}/dashboard`);
+    } else {
+      // Zero active company memberships -> Route to onboarding
+      router.push('/onboarding');
+    }
+  };
+
   const login = async (credentials: LoginInput, redirectTarget?: string | null) => {
     setIsLoading(true);
     setError(null);
@@ -62,23 +80,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const meData = await authApi.getMe();
       setUser(meData.user);
       setCompanies(meData.companies || []);
-
-      // Determine post-login redirect path
-      const safeRedirect = sanitizeRedirectUrl(redirectTarget);
-      if (safeRedirect && !safeRedirect.startsWith('/login') && !safeRedirect.startsWith('/onboarding')) {
-        router.push(safeRedirect);
-        return;
-      }
-
-      if (meData.companies && meData.companies.length > 0) {
-        const primaryStore = meData.companies[0].slug;
-        router.push(`/${primaryStore}/dashboard`);
-      } else {
-        // Zero active company memberships -> Route to onboarding
-        router.push('/onboarding');
-      }
+      handlePostAuthRedirect(meData, redirectTarget);
     } catch (err: any) {
       const msg = err instanceof ApiError ? err.message : 'Invalid email address or password.';
+      setError(msg);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (idToken: string, redirectTarget?: string | null) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await authApi.loginWithGoogle(idToken);
+      const meData = await authApi.getMe();
+      setUser(meData.user);
+      setCompanies(meData.companies || []);
+      handlePostAuthRedirect(meData, redirectTarget);
+    } catch (err: any) {
+      const msg = err instanceof ApiError ? err.message : 'Google authentication failed.';
+      setError(msg);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const linkGoogleAccount = async (idToken: string, password: string, redirectTarget?: string | null) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await authApi.linkGoogleAccount(idToken, password);
+      const meData = await authApi.getMe();
+      setUser(meData.user);
+      setCompanies(meData.companies || []);
+      handlePostAuthRedirect(meData, redirectTarget);
+    } catch (err: any) {
+      const msg = err instanceof ApiError ? err.message : 'Failed to link Google account.';
       setError(msg);
       throw err;
     } finally {
@@ -111,6 +151,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error,
         isAuthenticated: !!user,
         login,
+        loginWithGoogle,
+        linkGoogleAccount,
         logout,
         refreshSession,
         clearError,
@@ -120,6 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
+
 
 export function useAuth() {
   const context = useContext(AuthContext);

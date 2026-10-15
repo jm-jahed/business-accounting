@@ -64,3 +64,15 @@ export const RefreshTokenInputSchema = z.object({
   refreshToken: z.string().trim().min(1, 'Refresh token cannot be empty').optional(),
 });
 export type RefreshTokenInput = z.infer<typeof RefreshTokenInputSchema>;
+
+export const GoogleAuthInputSchema = z.object({
+  idToken: z.string().trim().min(1, 'Google ID token is required'),
+});
+export type GoogleAuthInput = z.infer<typeof GoogleAuthInputSchema>;
+
+export const GoogleLinkAccountInputSchema = z.object({
+  idToken: z.string().trim().min(1, 'Google ID token is required'),
+  password: z.string().min(1, 'Password is required to link this account'),
+});
+export type GoogleLinkAccountInput = z.infer<typeof GoogleLinkAccountInputSchema>;
+

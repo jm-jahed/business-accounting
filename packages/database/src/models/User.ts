@@ -6,6 +6,8 @@ export interface IUser extends Document {
   fullName: string;
   phone?: string;
   avatarUrl?: string;
+  googleId?: string;
+  authProvider: 'local' | 'google' | 'both';
   status: 'active' | 'suspended';
   lastLoginAt?: Date;
   createdAt: Date;
@@ -25,7 +27,19 @@ const UserSchema = new Schema<IUser>(
     },
     passwordHash: {
       type: String,
-      required: [true, 'Password hash is required'],
+      default: '',
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+      unique: true,
+      trim: true,
+    },
+    authProvider: {
+      type: String,
+      enum: ['local', 'google', 'both'],
+      default: 'local',
+      index: true,
     },
     fullName: {
       type: String,

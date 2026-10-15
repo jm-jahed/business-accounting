@@ -30,7 +30,8 @@ export function SystemStatusBadge() {
     setLoading(true);
     setError(null);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050/api';
+      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const baseUrl = isLocal ? '/api' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050/api');
       const res = await fetch(`${baseUrl}/health`, {
         headers: { 'Accept': 'application/json' },
       });
