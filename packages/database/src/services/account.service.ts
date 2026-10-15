@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Types, ClientSession, isValidObjectId } from 'mongoose';
 import { Account, IAccount } from '../models/Account.js';
 import { Company } from '../models/Company.js';
 import { Branch } from '../models/Branch.js';
@@ -15,13 +15,33 @@ export class AccountValidationError extends Error {
 
 export class AccountService {
   /**
+   * Checks whether an account is referenced by posted transactions in the ledger.
+   * Prevents unsafe mutations on active financial accounts.
+   */
+  async hasTransactionReferences(accountId: string, companyId: string): Promise<boolean> {
+    const JournalModel = (Account.db.models.JournalEntry || Account.db.models.Journal) as any;
+    if (JournalModel) {
+      const count = await JournalModel.countDocuments({
+        companyId: new Types.ObjectId(companyId),
+        'lines.accountId': accountId,
+      });
+      return count > 0;
+    }
+    return false;
+  }
+
+  /**
    * Creates a new Chart of Accounts record strictly scoped to the tenant.
    */
-  async createAccount(input: ChartOfAccountInput, context: TenantContext): Promise<IAccount> {
+  async createAccount(
+    input: ChartOfAccountInput,
+    context: TenantContext,
+    session?: ClientSession
+  ): Promise<IAccount> {
     validateTenantAccess(context, input.companyId);
 
     // 1. Verify Company exists and is active
-    const company = await Company.findById(context.companyId);
+    const company = await Company.findById(context.companyId).session(session || null);
     if (!company || company.status !== 'active') {
       throw new AccountValidationError('Target company does not exist or is not active.');
     }
@@ -32,7 +52,7 @@ export class AccountService {
       const branch = await Branch.findOne({
         _id: input.branchId,
         companyId: context.companyId,
-      });
+      }).session(session || null);
       if (!branch) {
         throw new AccountValidationError('Specified branch does not exist within this company.');
       }
@@ -43,7 +63,7 @@ export class AccountService {
     const existingCode = await Account.findOne({
       companyId: context.companyId,
       code: input.code.trim(),
-    });
+    }).session(session || null);
     if (existingCode) {
       throw new AccountValidationError(`Account code "${input.code}" already exists in this company.`);
     }
@@ -54,7 +74,7 @@ export class AccountService {
       const parent = await Account.findOne({
         _id: input.parentId,
         companyId: context.companyId,
-      });
+      }).session(session || null);
       if (!parent) {
         throw new AccountValidationError('Parent account not found within this company.');
       }
@@ -82,7 +102,40 @@ export class AccountService {
       description: input.description?.trim() || null,
     });
 
-    return await account.save();
+    try {
+      return await account.save({ session });
+    } catch (err: any) {
+      if (err?.code === 11000) {
+        throw new AccountValidationError(`Account code "${input.code}" already exists in this company.`);
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * Retrieves an individual account record strictly scoped to the tenant.
+   */
+  async getAccountById(
+    accountId: string,
+    context: TenantContext,
+    session?: ClientSession
+  ): Promise<IAccount> {
+    validateTenantAccess(context, context.companyId);
+
+    if (!isValidObjectId(accountId)) {
+      throw new AccountValidationError('Invalid account ID format.');
+    }
+
+    const account = await Account.findOne({
+      _id: accountId,
+      companyId: context.companyId,
+    }).session(session || null);
+
+    if (!account) {
+      throw new TenantAuthorizationError('Account record not found or inaccessible.');
+    }
+
+    return account;
   }
 
   /**
@@ -91,20 +144,25 @@ export class AccountService {
   async updateAccount(
     accountId: string,
     updates: Partial<ChartOfAccountInput>,
-    context: TenantContext
+    context: TenantContext,
+    session?: ClientSession
   ): Promise<IAccount> {
     validateTenantAccess(context, context.companyId);
+
+    if (!isValidObjectId(accountId)) {
+      throw new AccountValidationError('Invalid account ID format.');
+    }
 
     const account = await Account.findOne({
       _id: accountId,
       companyId: context.companyId,
-    });
+    }).session(session || null);
 
     if (!account) {
       throw new TenantAuthorizationError('Account record not found or inaccessible.');
     }
 
-    // System accounts cannot have code or type mutated
+    // System accounts cannot have code or type mutated, or be deactivated
     if (account.isSystem) {
       if (updates.code && updates.code !== account.code) {
         throw new AccountValidationError('Cannot alter account code of a protected system account.');
@@ -112,15 +170,38 @@ export class AccountService {
       if (updates.type && updates.type !== account.type) {
         throw new AccountValidationError('Cannot alter account type of a protected system account.');
       }
+      if (updates.isActive === false) {
+        throw new AccountValidationError('Core system accounts cannot be deactivated.');
+      }
     }
 
-    // If code is changing, check uniqueness
+    // Prevent deactivating an account if active child accounts depend on it
+    if (updates.isActive === false) {
+      const activeChild = await Account.findOne({
+        companyId: context.companyId,
+        parentId: account._id,
+        isActive: true,
+      }).session(session || null);
+
+      if (activeChild) {
+        throw new AccountValidationError(
+          `Cannot deactivate account because active child account "${activeChild.code} - ${activeChild.name}" depends on it.`
+        );
+      }
+    }
+
+    // If code is changing, check uniqueness and transactions
     if (updates.code && updates.code !== account.code) {
+      const hasTransactions = await this.hasTransactionReferences(accountId, context.companyId);
+      if (hasTransactions) {
+        throw new AccountValidationError('Cannot modify account code of an account with posted transactions.');
+      }
+
       const codeTaken = await Account.findOne({
         companyId: context.companyId,
         code: updates.code.trim(),
         _id: { $ne: account._id },
-      });
+      }).session(session || null);
       if (codeTaken) {
         throw new AccountValidationError(`Account code "${updates.code}" is already in use.`);
       }
@@ -137,21 +218,34 @@ export class AccountService {
         const parent = await Account.findOne({
           _id: updates.parentId,
           companyId: context.companyId,
-        });
+        }).session(session || null);
         if (!parent) {
           throw new AccountValidationError('Specified parent account not found in this company.');
         }
 
-        // Circular reference traversal check
+        // Validate that parent matches child account type
+        if (parent.type !== account.type) {
+          throw new AccountValidationError(
+            `Parent account type (${parent.type}) must match child account type (${account.type}).`
+          );
+        }
+
+        // Circular reference traversal check with safety depth limit
         let currentParentId: Types.ObjectId | null | undefined = parent.parentId;
+        let depth = 0;
+        const MAX_DEPTH = 50;
+
         while (currentParentId) {
+          if (depth++ > MAX_DEPTH) {
+            throw new AccountValidationError('Maximum hierarchy depth exceeded.');
+          }
           if (currentParentId.toString() === account._id.toString()) {
             throw new AccountValidationError('Circular parent account relationship detected.');
           }
           const ancestor = await Account.findOne({
             _id: currentParentId,
             companyId: context.companyId,
-          });
+          }).session(session || null);
           currentParentId = ancestor?.parentId;
         }
 
@@ -163,21 +257,37 @@ export class AccountService {
 
     if (updates.name) account.name = updates.name.trim();
     if (updates.description !== undefined) account.description = updates.description?.trim() || null;
+    if (updates.currency !== undefined && updates.currency) account.currency = updates.currency.trim();
     if (updates.isActive !== undefined) account.isActive = updates.isActive;
 
-    return await account.save();
+    try {
+      return await account.save({ session });
+    } catch (err: any) {
+      if (err?.code === 11000) {
+        throw new AccountValidationError(`Account code "${updates.code || account.code}" is already in use.`);
+      }
+      throw err;
+    }
   }
 
   /**
    * Deactivates an account (controlled deactivation, never hard delete).
    */
-  async deactivateAccount(accountId: string, context: TenantContext): Promise<IAccount> {
+  async deactivateAccount(
+    accountId: string,
+    context: TenantContext,
+    session?: ClientSession
+  ): Promise<IAccount> {
     validateTenantAccess(context, context.companyId);
+
+    if (!isValidObjectId(accountId)) {
+      throw new AccountValidationError('Invalid account ID format.');
+    }
 
     const account = await Account.findOne({
       _id: accountId,
       companyId: context.companyId,
-    });
+    }).session(session || null);
 
     if (!account) {
       throw new TenantAuthorizationError('Account record not found or inaccessible.');
@@ -187,19 +297,60 @@ export class AccountService {
       throw new AccountValidationError('Core system accounts cannot be deactivated.');
     }
 
+    // Check if any child accounts are active
+    const activeChild = await Account.findOne({
+      companyId: context.companyId,
+      parentId: account._id,
+      isActive: true,
+    }).session(session || null);
+
+    if (activeChild) {
+      throw new AccountValidationError(
+        `Cannot deactivate account because active child account "${activeChild.code} - ${activeChild.name}" depends on it.`
+      );
+    }
+
     account.isActive = false;
-    return await account.save();
+    return await account.save({ session });
   }
 
   /**
-   * Retrieves all Chart of Accounts records strictly scoped to the tenant.
+   * Retrieves all Chart of Accounts records strictly scoped to the tenant with optional search & filters.
    */
   async getCompanyAccounts(
     context: TenantContext,
-    filters: { type?: AccountType; isActive?: boolean } = {}
+    filters: { type?: AccountType; isActive?: boolean; search?: string; limit?: number } = {},
+    session?: ClientSession
   ): Promise<IAccount[]> {
-    const query = createTenantScopedFilter(context, filters);
-    return await Account.find(query).sort({ code: 1 }).exec();
+    const filterQuery: Record<string, any> = {};
+
+    if (filters.type) {
+      filterQuery.type = filters.type;
+    }
+    if (filters.isActive !== undefined) {
+      filterQuery.isActive = filters.isActive;
+    }
+    if (filters.search && filters.search.trim()) {
+      const term = filters.search.trim();
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filterQuery.$or = [
+        { code: { $regex: escaped, $options: 'i' } },
+        { name: { $regex: escaped, $options: 'i' } },
+      ];
+    }
+
+    const MAX_LIMIT = 500;
+    const requestedLimit =
+      typeof filters.limit === 'number' && filters.limit > 0
+        ? Math.min(filters.limit, MAX_LIMIT)
+        : MAX_LIMIT;
+
+    const query = createTenantScopedFilter(context, filterQuery);
+    return await Account.find(query)
+      .session(session || null)
+      .sort({ code: 1 })
+      .limit(requestedLimit)
+      .exec();
   }
 
   /**
@@ -208,11 +359,12 @@ export class AccountService {
    */
   async initializeStandardChartOfAccounts(
     companyId: string,
-    context: TenantContext
+    context: TenantContext,
+    session?: ClientSession
   ): Promise<{ createdCount: number }> {
     validateTenantAccess(context, companyId);
 
-    const company = await Company.findById(companyId);
+    const company = await Company.findById(companyId).session(session || null);
     if (!company) {
       throw new AccountValidationError('Company not found.');
     }
@@ -232,7 +384,7 @@ export class AccountService {
       { code: '1500', name: 'Office & Facility Equipment', type: 'ASSET', isSystem: false, description: 'Fixed operational assets' },
       // Liabilities (2000 - 2999)
       { code: '2010', name: 'Accounts Payable (AP)', type: 'LIABILITY', isSystem: true, description: 'Unsettled supplier bills' },
-      { code: '2210', name: 'VAT Output Tax Payable', type: 'LIABILITY', isSystem: true, description: 'VAT collected on commercial sales (5%)' },
+      { code: '2210', name: 'VAT Output Tax Payable', type: 'LIABILITY', isSystem: true, description: 'VAT collected on commercial taxable sales' },
       { code: '2220', name: 'VAT Input Tax Recoverable', type: 'LIABILITY', isSystem: true, description: 'VAT paid on purchases eligible for input credit' },
       { code: '2500', name: 'Accrued Operating Liabilities', type: 'LIABILITY', isSystem: false, description: 'Accrued expenses due for payment' },
       // Equity (3000 - 3999)
@@ -254,20 +406,33 @@ export class AccountService {
     const companyObjId = new Types.ObjectId(companyId);
 
     for (const tpl of standardTemplates) {
-      const exists = await Account.findOne({ companyId: companyObjId, code: tpl.code });
-      if (!exists) {
-        await Account.create({
-          companyId: companyObjId,
-          code: tpl.code,
-          name: tpl.name,
-          type: tpl.type,
-          normalBalance: getNormalBalanceForAccountType(tpl.type),
-          isSystem: tpl.isSystem,
-          isActive: true,
-          currency: company.currency || 'AED',
-          description: tpl.description,
-        });
-        createdCount++;
+      try {
+        const exists = await Account.findOne({ companyId: companyObjId, code: tpl.code }).session(session || null);
+        if (!exists) {
+          await Account.create(
+            [
+              {
+                companyId: companyObjId,
+                code: tpl.code,
+                name: tpl.name,
+                type: tpl.type,
+                normalBalance: getNormalBalanceForAccountType(tpl.type),
+                isSystem: tpl.isSystem,
+                isActive: true,
+                currency: company.currency || 'AED',
+                description: tpl.description,
+              },
+            ],
+            session ? { session } : {}
+          );
+          createdCount++;
+        }
+      } catch (err: any) {
+        if (err?.code === 11000) {
+          // Idempotent recovery if concurrent initializer inserted the same code
+          continue;
+        }
+        throw err;
       }
     }
 

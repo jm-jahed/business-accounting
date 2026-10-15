@@ -85,11 +85,25 @@ AuditLogSchema.pre('updateOne', function () {
 AuditLogSchema.pre('updateMany', function () {
   throw new Error('AuditLog records are append-only and cannot be mutated.');
 });
+AuditLogSchema.pre('findOneAndUpdate', function () {
+  throw new Error('AuditLog records are append-only and cannot be mutated.');
+});
+AuditLogSchema.pre('findOneAndReplace', function () {
+  throw new Error('AuditLog records are append-only and cannot be mutated.');
+});
 AuditLogSchema.pre('deleteOne', function () {
   throw new Error('AuditLog records are append-only and cannot be deleted.');
 });
 AuditLogSchema.pre('deleteMany', function () {
   throw new Error('AuditLog records are append-only and cannot be deleted.');
+});
+AuditLogSchema.pre('findOneAndDelete', function () {
+  throw new Error('AuditLog records are append-only and cannot be deleted.');
+});
+AuditLogSchema.pre('save', function () {
+  if (!this.isNew) {
+    throw new Error('AuditLog records are append-only and cannot be mutated.');
+  }
 });
 
 export const AuditLog: Model<IAuditLog> =

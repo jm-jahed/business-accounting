@@ -1,4 +1,10 @@
-import type { LoginInput } from '@accounting/contracts';
+import type {
+  LoginInput,
+  AccountResponseDto,
+  CreateAccountInput,
+  UpdateAccountInput,
+  AccountType,
+} from '@accounting/contracts';
 
 export interface AuthUser {
   id: string;
@@ -44,6 +50,12 @@ export class ApiError extends Error {
 }
 
 function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocalhost) {
+      return '/api';
+    }
+  }
   const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
   const cleaned = rawUrl.replace(/\/+$/, '');
   return cleaned.endsWith('/api') ? cleaned : `${cleaned}/api`;
@@ -197,5 +209,89 @@ export const authApi = {
     } catch {
       return false;
     }
+  },
+
+  async loginWithGoogle(idToken: string): Promise<any> {
+    return apiClient('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ idToken }),
+      retryOnUnauthorized: false,
+    });
+  },
+
+  async linkGoogleAccount(idToken: string, password: string): Promise<any> {
+    return apiClient('/auth/google/link', {
+      method: 'POST',
+      body: JSON.stringify({ idToken, password }),
+      retryOnUnauthorized: false,
+    });
+  },
+};
+
+/**
+ * Chart of Accounts API operations
+ */
+export const accountsApi = {
+  async list(
+    companyId: string,
+    params?: { type?: AccountType; isActive?: boolean; search?: string; limit?: number }
+  ): Promise<AccountResponseDto[]> {
+    const query = new URLSearchParams();
+    if (params?.type) query.set('type', params.type);
+    if (params?.isActive !== undefined) query.set('isActive', String(params.isActive));
+    if (params?.search) query.set('search', params.search);
+    if (params?.limit !== undefined) query.set('limit', String(params.limit));
+    const qs = query.toString();
+    const endpoint = `/companies/${companyId}/accounts${qs ? `?${qs}` : ''}`;
+    return apiClient<AccountResponseDto[]>(endpoint, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async getById(companyId: string, accountId: string): Promise<AccountResponseDto> {
+    return apiClient<AccountResponseDto>(`/companies/${companyId}/accounts/${accountId}`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async create(companyId: string, input: CreateAccountInput): Promise<AccountResponseDto> {
+    return apiClient<AccountResponseDto>(`/companies/${companyId}/accounts`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(input),
+    });
+  },
+
+  async update(
+    companyId: string,
+    accountId: string,
+    input: UpdateAccountInput
+  ): Promise<AccountResponseDto> {
+    return apiClient<AccountResponseDto>(`/companies/${companyId}/accounts/${accountId}`, {
+      method: 'PATCH',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(input),
+    });
+  },
+
+  async deactivate(companyId: string, accountId: string): Promise<AccountResponseDto> {
+    return apiClient<AccountResponseDto>(`/companies/${companyId}/accounts/${accountId}`, {
+      method: 'DELETE',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async initializeStandard(
+    companyId: string
+  ): Promise<{ message: string; createdCount: number }> {
+    return apiClient<{ message: string; createdCount: number }>(
+      `/companies/${companyId}/accounts/initialize`,
+      {
+        method: 'POST',
+        headers: { 'x-company-id': companyId },
+      }
+    );
   },
 };

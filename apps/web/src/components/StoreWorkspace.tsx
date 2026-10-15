@@ -39,6 +39,7 @@ import {
   ReportsView,
   TeamView,
   SettingsView,
+  BankingView,
 } from './TabViews';
 import {
   formatCurrencyAmount,
@@ -281,10 +282,18 @@ function StoreWorkspaceContent({ storeSlug, initialPage }: { storeSlug: string; 
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.18 }}
           >
-            {(activeTab === 'accounts' || activeTab === 'coa') && <ChartOfAccountsView />}
+            {(activeTab === 'accounts' || activeTab === 'coa') && (
+              <ChartOfAccountsView
+                storeSlug={storeSlug}
+                companyId={authCompanies?.find((c) => c.slug === storeSlug)?.companyId}
+                userRole={authCompanies?.find((c) => c.slug === storeSlug)?.role}
+                currency={authCompanies?.find((c) => c.slug === storeSlug)?.currency || baseCurrency}
+              />
+            )}
             {activeTab === 'ledger' && <GeneralLedgerView />}
             {activeTab === 'sales' && <SalesInvoicesView />}
             {(activeTab === 'purchases' || activeTab === 'bills') && <PurchasesView />}
+            {activeTab === 'banking' && <BankingView />}
             {activeTab === 'reports' && <ReportsView />}
             {activeTab === 'team' && <TeamView />}
             {activeTab === 'settings' && <SettingsView />}
