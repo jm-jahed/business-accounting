@@ -82,7 +82,7 @@ export function getCsrfTokenFromCookie(): string | null {
 let activeRefreshPromise: Promise<boolean> | null = null;
 
 /**
- * Universal browser API client for the Universal Business Accounting System.
+ * Universal browser API client for Global ERP.
  * - Enforces credentials: 'include' (HttpOnly cookies).
  * - Transmits x-client-type: web header.
  * - Injects x-csrf-token on mutating requests.

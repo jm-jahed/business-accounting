@@ -1,5 +1,5 @@
 # System Architecture & Technical Specifications
-**Universal Business Accounting & Management System**  
+**Global ERP**  
 *Document Status: Core Architectural Reference | Last Updated: October 2026*
 
 ---

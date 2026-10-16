@@ -50,6 +50,7 @@ export interface InventoryWorkspaceProps {
   storeSlug?: string;
   companyId?: string;
   currency?: string;
+  initialSubTab?: InventorySubTab;
 }
 
 type InventorySubTab =
@@ -106,8 +107,9 @@ export function InventoryWorkspace({
   storeSlug = 'barakah-enterprises',
   companyId,
   currency = 'AED',
+  initialSubTab,
 }: InventoryWorkspaceProps) {
-  const [activeSubTab, setActiveSubTab] = useState<InventorySubTab>('overview');
+  const [activeSubTab, setActiveSubTab] = useState<InventorySubTab>(initialSubTab || 'overview');
   const [loading, setLoading] = useState(false);
   const [seeding, setSeeding] = useState(false);
 
@@ -924,7 +926,7 @@ export function InventoryWorkspace({
               <div style={{ maxWidth: '600px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--gold)', fontWeight: 700, fontSize: '15px' }}>
                   <Sparkles size={18} />
-                  <span>Welcome to Universal Inventory & Warehouse Engine</span>
+                  <span>Welcome to Global ERP Inventory & Warehouse Engine</span>
                 </div>
                 <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '6px 0 0' }}>
                   Your catalog is ready for initialization. Click below to automatically seed standard UAE/GCC Units of Measure (PCS, BOX, CTN, KG, LTR), baseline categories, and your default Central Logistics Warehouse in 1 click.

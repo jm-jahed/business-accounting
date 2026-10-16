@@ -1,5 +1,5 @@
 # Engineering Rules & Agent Operating Guidelines
-**Universal Business Accounting & Management System**  
+**Global ERP**  
 *Repository Root: `D:\business-accounting` | Status: Active Engineering Policy*
 
 ---

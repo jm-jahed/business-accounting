@@ -1,5 +1,5 @@
 # Global SaaS Billing & Subscription Architecture
-**Universal Business Accounting & Management System**  
+**Global ERP**  
 *Document Status: Architecture & Security Specification | Design Only (Zero Payment Gateway Code)*
 
 ---

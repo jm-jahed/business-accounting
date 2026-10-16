@@ -10,3 +10,4 @@ export * from './dashboard.schema.js';
 export * from './business-pack.schema.js';
 export * from './packs/index.js';
 export * from './admin.schema.js';
+export * from './menu.js';

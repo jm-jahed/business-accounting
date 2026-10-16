@@ -79,7 +79,7 @@ function OnboardingContent() {
           </div>
           <div>
             <div style={{ fontSize: '15px', fontWeight: 600, color: '#F0F4FA' }}>
-              Universal Business Accounting
+              Global ERP
             </div>
             <div style={{ fontSize: '11px', color: '#7E8DA6' }}>
               Account Activation & Organization Workspace

@@ -59,7 +59,7 @@ export class AdminTotpService {
   } {
     const secret = generateSecret();
     const otpauthUri = generateURI({
-      issuer: 'Universal Accounting Super Admin',
+      issuer: 'Global ERP Super Admin',
       label: email,
       secret,
     });

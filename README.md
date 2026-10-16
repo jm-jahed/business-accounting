@@ -1,4 +1,4 @@
-# Universal Business Accounting & Management System
+# Global ERP
 
 Enterprise-grade double-entry accounting, inventory management, regional compliance, and SaaS multi-tenant platform.
 

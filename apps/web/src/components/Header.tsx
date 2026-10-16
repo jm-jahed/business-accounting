@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Info,
   LogOut,
+  Settings as SettingsIcon,
 } from 'lucide-react';
 import { useI18n } from '../i18n/context';
 import { useAuth } from '../contexts/AuthContext';
@@ -72,215 +73,67 @@ export function Header({
     <header
       style={{
         height: '62px',
-        backgroundColor: 'var(--surface-1)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid var(--border)',
+        backgroundColor: '#070B14',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 20px',
+        padding: '0 24px',
         flexShrink: 0,
         position: 'sticky',
         top: 0,
         zIndex: 30,
       }}
     >
-      {/* Left: Mobile Toggle + Company Switcher + Search */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
-        {/* Mobile Hamburger */}
+      {/* Left: Mobile/Desktop Hamburger + Capsule Search */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, minWidth: 0 }}>
+        {/* Luxury Gold Hamburger Button - Strictly hidden on desktop web via .header-hamburger-btn */}
         <button
           onClick={onOpenMobile}
-          className="mobile-menu-btn"
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'var(--text-secondary)',
-            padding: '6px',
-            display: 'none',
-            borderRadius: '6px',
-          }}
-          aria-label="Open mobile navigation"
+          className="header-hamburger-btn"
+          aria-label="Toggle navigation"
         >
-          <Menu size={20} />
+          <Menu size={22} color="#F59E0B" />
         </button>
 
-        {/* Company Switcher Dropdown */}
-        <div style={{ position: 'relative' }} ref={companyRef}>
-          <button
-            onClick={() => setShowCompanyMenu(!showCompanyMenu)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 12px',
-              borderRadius: '7px',
-              backgroundColor: 'var(--surface-3)',
-              border: '1px solid var(--border-card)',
-              color: 'var(--text-primary)',
-              fontSize: '13px',
-              fontWeight: 500,
-              maxWidth: '260px',
-              boxShadow: 'var(--shadow-sm)',
-              transition: 'border-color 150ms ease, background-color 150ms ease',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--gold-hover)')}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-card)')}
-          >
-            <Building2 size={16} color="var(--gold)" />
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {selectedCompany}
-            </span>
-            <ChevronDown size={14} color="var(--text-secondary)" />
-          </button>
-
-          {showCompanyMenu && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 'calc(100% + 6px)',
-                insetInlineStart: 0,
-                width: '300px',
-                backgroundColor: 'var(--surface-2)',
-                border: '1px solid var(--border-card)',
-                borderRadius: '8px',
-                boxShadow: 'var(--shadow-elevated)',
-                padding: '8px',
-                zIndex: 40,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  color: 'var(--text-muted)',
-                  letterSpacing: '0.5px',
-                  padding: '6px 8px',
-                  borderBottom: '1px solid var(--border-subtle)',
-                  marginBottom: '4px',
-                }}
-              >
-                ACTIVE STORE / TENANT ENTITY
-              </div>
-              {companies.map((c) => (
-                <div
-                  key={c.name}
-                  onClick={() => {
-                    onSelectCompany(c.name, c.slug);
-                    setShowCompanyMenu(false);
-                  }}
-                  style={{
-                    padding: '8px 10px',
-                    borderRadius: '6px',
-                    backgroundColor: selectedCompany === c.name ? 'var(--surface-3)' : 'transparent',
-                    border: selectedCompany === c.name ? '1px solid var(--gold)' : '1px solid transparent',
-                    cursor: 'pointer',
-                    marginBottom: '2px',
-                  }}
-                >
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{c.name}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                    {c.branch} • TRN: {c.trn}
-                  </div>
-                </div>
-              ))}
-              <div
-                style={{
-                  padding: '8px 10px',
-                  fontSize: '11px',
-                  color: 'var(--gold)',
-                  backgroundColor: 'var(--gold-dim)',
-                  borderRadius: '6px',
-                  marginTop: '6px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                <Info size={14} />
-                <span>{dict.header.activeCompanyNote}</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Global Search Input */}
+        {/* Global Luxury Capsule Search Input */}
         <div
           className="header-search-container"
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            backgroundColor: 'var(--surface-3)',
-            border: '1px solid var(--border-card)',
-            borderRadius: '7px',
-            padding: '5px 10px',
-            width: '280px',
-            boxShadow: 'var(--shadow-sm)',
+            gap: '10px',
+            backgroundColor: 'rgba(15, 23, 42, 0.75)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '24px',
+            padding: '7px 16px',
+            width: '360px',
+            boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.4)',
+            transition: 'border-color 150ms ease, box-shadow 150ms ease',
           }}
+          onFocusCapture={(e) => (e.currentTarget.style.borderColor = 'rgba(201, 162, 75, 0.5)')}
+          onBlurCapture={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
         >
-          <Search size={14} color="var(--text-muted)" />
+          <Search size={15} color="#94A3B8" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder={dict.header.searchPlaceholder}
+            placeholder="Search anything..."
             style={{
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              color: 'var(--text-primary)',
-              fontSize: '12px',
+              color: '#F8FAFC',
+              fontSize: '13px',
               width: '100%',
             }}
           />
-          <kbd
-            onClick={onOpenCommandPalette}
-            style={{
-              fontSize: '10px',
-              fontWeight: 600,
-              color: 'var(--text-muted)',
-              backgroundColor: 'var(--surface-subtle)',
-              border: '1px solid var(--border-card)',
-              borderRadius: '4px',
-              padding: '1px 5px',
-              letterSpacing: '0.2px',
-              flexShrink: 0,
-              cursor: 'pointer',
-            }}
-            title="Open command palette (Ctrl+K)"
-          >
-            Ctrl+K
-          </kbd>
         </div>
       </div>
 
-      {/* Right Controls: Date Range, Language/Currency, Theme, Notifications, User */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        {/* Language & Currency Selectors */}
-        <LanguageSelector />
-        <CurrencySelector />
-
-        {/* Light / Dark Theme Toggle */}
-        <ThemeToggle />
-
-        {/* Fiscal Calendar Badge */}
-        <div
-          className="header-fiscal-badge"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '6px 10px',
-            backgroundColor: 'var(--surface-3)',
-            border: '1px solid var(--border-card)',
-            borderRadius: '7px',
-            fontSize: '12px',
-            color: 'var(--text-secondary)',
-          }}
-        >
-          <Calendar size={14} color="var(--gold)" />
-          <span>{dict.header.fiscalYear}</span>
-        </div>
+      {/* Right Controls: Notification Bell, Settings Gear, User Profile Capsule */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
 
         {/* Notifications Icon Button */}
         <div style={{ position: 'relative' }} ref={notifRef}>
@@ -304,24 +157,32 @@ export function Header({
               e.currentTarget.style.color = 'var(--text-primary)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--border-card)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
               e.currentTarget.style.color = 'var(--text-secondary)';
             }}
             aria-label="View notifications"
           >
-            <Bell size={15} />
+            <Bell size={17} />
             <span
               style={{
                 position: 'absolute',
-                top: '7px',
-                right: '7px',
-                width: '6px',
-                height: '6px',
+                top: '-2px',
+                right: '-2px',
+                width: '16px',
+                height: '16px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--success)',
-                boxShadow: '0 0 6px var(--success-glow)',
+                backgroundColor: '#EF4444',
+                color: '#FFFFFF',
+                fontSize: '10px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '2px solid #0B1220',
               }}
-            />
+            >
+              2
+            </span>
           </button>
 
           {showNotifications && (
@@ -360,38 +221,93 @@ export function Header({
           )}
         </div>
 
-        {/* User Monogram Profile */}
+        {/* Settings Gear Quick Action */}
+        <button
+          onClick={() => {
+            if (_storeSlug) {
+              window.location.href = `/${_storeSlug}/settings`;
+            }
+          }}
+          style={{
+            width: '34px',
+            height: '34px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(15, 23, 42, 0.75)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            transition: 'all 150ms ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'var(--gold-hover)';
+            e.currentTarget.style.color = 'var(--text-primary)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+            e.currentTarget.style.color = 'var(--text-secondary)';
+          }}
+          title="Settings"
+          aria-label="Open settings"
+        >
+          <SettingsIcon size={17} />
+        </button>
+
+        {/* User Luxury Profile Card */}
         <div style={{ position: 'relative' }} ref={userRef}>
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '4px 8px',
-              borderRadius: '6px',
-              backgroundColor: 'var(--surface-3)',
-              border: '1px solid var(--border-card)',
+              gap: '10px',
+              padding: '3px 12px 3px 4px',
+              borderRadius: '28px',
+              backgroundColor: 'rgba(15, 23, 42, 0.75)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
               color: 'var(--text-primary)',
+              cursor: 'pointer',
+              transition: 'border-color 150ms ease',
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(201, 162, 75, 0.4)')}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
           >
             <div
               style={{
-                width: '26px',
-                height: '26px',
+                width: '32px',
+                height: '32px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--surface-hover)',
+                background: 'linear-gradient(135deg, #F3D086 0%, #C9A24B 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                color: '#0B1220',
+                fontWeight: 800,
+                fontSize: '12px',
+                boxShadow: '0 2px 8px rgba(201, 162, 75, 0.35)',
+                flexShrink: 0,
               }}
             >
-              <User size={14} color="var(--gold)" />
+              {user?.fullName
+                ? user.fullName
+                    .split(' ')
+                    .map((n: string) => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .slice(0, 2)
+                : 'SA'}
             </div>
-            <span style={{ fontSize: '12px', fontWeight: 600 }}>
-              {user?.fullName?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
-            </span>
-            <ChevronDown size={12} color="var(--text-secondary)" />
+            <div className="header-user-info-text" style={{ textAlign: 'start', lineHeight: 1.25 }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#F8FAFC', whiteSpace: 'nowrap' }}>
+                {user?.fullName || 'Saiful Ahmed'}
+              </div>
+              <div style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                Administrator
+              </div>
+            </div>
+            <ChevronDown size={13} color="var(--text-secondary)" />
           </button>
 
           {showUserMenu && (

@@ -3,8 +3,8 @@ import './globals.css';
 import { AuthProvider } from '../contexts/AuthContext';
 
 export const metadata: Metadata = {
-  title: 'Universal Business Accounting & Management System',
-  description: 'Enterprise Multi-Company Double-Entry Accounting System',
+  title: 'Global ERP',
+  description: 'Global ERP — Enterprise Multi-Company Double-Entry Accounting & Management System',
 };
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
         />
         <script
           dangerouslySetInnerHTML={{

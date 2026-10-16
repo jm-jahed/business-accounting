@@ -1,5 +1,5 @@
 # Comprehensive A–Z ERP Module Inventory & Status Audit
-**Universal Business Accounting & Management System**  
+**Global ERP**  
 *Audit Date: October 2026 | Audit Type: Evidence-Based Static Code & Test Inspection*
 
 ---

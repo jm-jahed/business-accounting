@@ -60,17 +60,39 @@ const CommandPalette = dynamic(
 export interface StoreWorkspaceProps {
   storeSlug?: string;
   initialPage?: string;
+  activePath?: string;
+  children?: React.ReactNode;
 }
 
-export function StoreWorkspace({ storeSlug = 'barakah-enterprises', initialPage = 'dashboard' }: StoreWorkspaceProps) {
+export function StoreWorkspace({
+  storeSlug = 'barakah-enterprises',
+  initialPage = 'dashboard',
+  activePath,
+  children,
+}: StoreWorkspaceProps) {
   return (
     <I18nProvider>
-      <StoreWorkspaceContent storeSlug={storeSlug} initialPage={initialPage} />
+      <StoreWorkspaceContent
+        storeSlug={storeSlug}
+        initialPage={initialPage}
+        activePath={activePath}
+        children={children}
+      />
     </I18nProvider>
   );
 }
 
-function StoreWorkspaceContent({ storeSlug, initialPage }: { storeSlug: string; initialPage: string }) {
+function StoreWorkspaceContent({
+  storeSlug,
+  initialPage,
+  activePath,
+  children,
+}: {
+  storeSlug: string;
+  initialPage: string;
+  activePath?: string;
+  children?: React.ReactNode;
+}) {
   const router = useRouter();
   const { dict, locale, baseCurrency } = useI18n();
 
@@ -175,6 +197,7 @@ function StoreWorkspaceContent({ storeSlug, initialPage }: { storeSlug: string; 
       <Sidebar
         storeSlug={storeSlug}
         activeTab={activeTab}
+        activePath={activePath}
         onTabChange={handleTabChange}
         mobileOpen={mobileOpen}
         onCloseMobile={() => setMobileOpen(false)}
@@ -196,12 +219,22 @@ function StoreWorkspaceContent({ storeSlug, initialPage }: { storeSlug: string; 
 
         {/* Dynamic Workspace Container */}
         <main style={{ flex: 1, padding: '20px 24px 32px', overflowY: 'auto' }}>
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18 }}
-          >
+          {children ? (
+            <motion.div
+              key={activePath || 'custom-child'}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.18 }}
+            >
+              {children}
+            </motion.div>
+          ) : (
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.18 }}
+            >
             {(activeTab === 'accounts' || activeTab === 'coa') && (
               <ChartOfAccountsView
                 storeSlug={storeSlug}
@@ -227,94 +260,16 @@ function StoreWorkspaceContent({ storeSlug, initialPage }: { storeSlug: string; 
 
             {/* Default Primary Financial Dashboard */}
             {activeTab === 'dashboard' && (
-              <>
-                {/* Executive Context Bar */}
-                <div
-                  className="erp-card"
-                  style={{
-                    padding: '12px 18px',
-                    marginBottom: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '12px',
-                    backgroundColor: 'var(--surface-2)',
-                    borderColor: 'var(--border-card)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div
-                        style={{
-                          width: '28px',
-                          height: '28px',
-                          borderRadius: 'var(--radius-sm)',
-                          backgroundColor: 'var(--gold-dim)',
-                          border: '1px solid rgba(201, 162, 75, 0.3)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'var(--gold)',
-                        }}
-                      >
-                        <Building2 size={15} />
-                      </div>
-                      <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-ivory)' }}>
-                        {selectedCompany}
-                      </span>
-                      <span
-                        className="tabular-nums"
-                        style={{
-                          fontSize: '11px',
-                          color: 'var(--gold-hover)',
-                          backgroundColor: 'var(--gold-dim)',
-                          border: '1px solid rgba(201, 162, 75, 0.25)',
-                          padding: '1px 6px',
-                          borderRadius: 'var(--radius-xs)',
-                          fontWeight: 600,
-                        }}
-                      >
-                        /{storeSlug}
-                      </span>
-                    </div>
-
-                    <span style={{ color: 'var(--border-strong)' }}>|</span>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                      <Calendar size={13} color="var(--gold)" />
-                      <span>{dict.dashboard.fiscalPeriodLabel}</span>
-                    </div>
-
-                    <span style={{ color: 'var(--border-strong)' }}>|</span>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                      <Layers size={13} color="var(--text-muted)" />
-                      <span>Base: <bdi dir="ltr" style={{ fontWeight: 700, color: 'var(--text-ivory)' }}>{baseCurrency}</bdi></span>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Badge variant="success" size="sm" dot>
-                      Strict Tenant Isolation Active
-                    </Badge>
-                    <Badge variant="gold" size="sm">
-                      UAE FTA VAT 5%
-                    </Badge>
-                  </div>
-                </div>
-
-                {/* Live Real-Time Double-Entry Executive Dashboard */}
-                <Dashboard
-                  companyId={authCompanies?.find((c) => c.slug === storeSlug)?.companyId}
-                  storeSlug={storeSlug}
-                  userRole={authCompanies?.find((c) => c.slug === storeSlug)?.role}
-                  currency={authCompanies?.find((c) => c.slug === storeSlug)?.currency || baseCurrency}
-                  onNavigateTab={handleTabChange}
-                />
-              </>
+              <Dashboard
+                companyId={authCompanies?.find((c) => c.slug === storeSlug)?.companyId}
+                storeSlug={storeSlug}
+                userRole={authCompanies?.find((c) => c.slug === storeSlug)?.role}
+                currency={authCompanies?.find((c) => c.slug === storeSlug)?.currency || baseCurrency}
+                onNavigateTab={handleTabChange}
+              />
             )}
           </motion.div>
+          )}
         </main>
       </div>
     </div>

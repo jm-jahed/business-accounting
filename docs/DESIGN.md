@@ -1,5 +1,5 @@
 # UI Design System & Component Specifications
-**Universal Business Accounting & Management System**  
+**Global ERP**  
 *Document Status: Core Design Standard | Last Updated: October 2026*
 
 ---
