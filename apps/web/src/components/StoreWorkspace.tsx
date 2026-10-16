@@ -50,6 +50,7 @@ import {
 } from './TabViews';
 import { Dashboard } from './Dashboard';
 import { InventoryWorkspace } from './inventory/InventoryWorkspace';
+import { SalesWorkspace } from './sales/SalesWorkspace';
 
 // Lazy load heavy components
 const CommandPalette = dynamic(
@@ -244,7 +245,13 @@ function StoreWorkspaceContent({
               />
             )}
             {activeTab === 'ledger' && <GeneralLedgerView />}
-            {activeTab === 'sales' && <SalesInvoicesView />}
+            {(activeTab === 'sell' || activeTab === 'sales') && (
+              <SalesWorkspace
+                storeSlug={storeSlug}
+                companyId={authCompanies?.find((c) => c.slug === storeSlug)?.companyId}
+                currency={authCompanies?.find((c) => c.slug === storeSlug)?.currency || baseCurrency}
+              />
+            )}
             {(activeTab === 'purchases' || activeTab === 'bills') && <PurchasesView />}
             {activeTab === 'inventory' && (
               <InventoryWorkspace

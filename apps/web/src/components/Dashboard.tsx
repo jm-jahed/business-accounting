@@ -548,9 +548,9 @@ export function Dashboard({
           2. TOP 5 KPI METRIC CARDS
           ===================================================================== */}
       <div
+        className="dashboard-kpi-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
           gap: '12px',
         }}
       >
@@ -671,14 +671,15 @@ export function Dashboard({
           3. MIDDLE SECTION (3 COLUMNS: Performance, Donut, Quick Actions)
           ===================================================================== */}
       <div
+        className="dashboard-middle-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.85fr) minmax(0, 1.05fr) minmax(0, 1fr)',
           gap: '14px',
         }}
       >
         {/* Card 1: Business Performance */}
         <div
+          className="dashboard-perf-card"
           style={{
             backgroundColor: 'rgba(15, 23, 42, 0.85)',
             borderRadius: '12px',
@@ -1008,14 +1009,15 @@ export function Dashboard({
           4. BOTTOM SECTION (3 COLUMNS: Transactions, Top Products, Activity)
           ===================================================================== */}
       <div
+        className="dashboard-bottom-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1.85fr) minmax(0, 1.05fr) minmax(0, 1fr)',
           gap: '14px',
         }}
       >
         {/* Card 1: Recent Transactions Table */}
         <div
+          className="dashboard-tx-card"
           style={{
             backgroundColor: 'rgba(15, 23, 42, 0.85)',
             borderRadius: '12px',
