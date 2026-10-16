@@ -10,7 +10,12 @@ export interface ICompany extends Document {
   currency: string;
   fiscalYearStartMonth: number;
   countryCode: string;
+  country?: string;
+  region?: string;
+  dataRegion?: string;
+  vatNumber?: string;
   industryType: 'retail' | 'supermarket' | 'restaurant' | 'trading' | 'manufacturing' | 'services' | 'general';
+  businessTypes?: string[];
   enabledModules: string[];
   plan: string;
   subscriptionStatus: 'trial' | 'active' | 'past_due' | 'suspended' | 'cancelled';
@@ -89,10 +94,38 @@ const CompanySchema = new Schema<ICompany>(
       maxlength: 2,
       index: true,
     },
+    country: {
+      type: String,
+      trim: true,
+      default: '',
+      index: true,
+    },
+    region: {
+      type: String,
+      trim: true,
+      default: '',
+      index: true,
+    },
+    dataRegion: {
+      type: String,
+      trim: true,
+      default: 'GULF',
+      index: true,
+    },
+    vatNumber: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     industryType: {
       type: String,
       enum: ['retail', 'supermarket', 'restaurant', 'trading', 'manufacturing', 'services', 'general'],
       default: 'general',
+      index: true,
+    },
+    businessTypes: {
+      type: [String],
+      default: ['retail'],
       index: true,
     },
     enabledModules: {

@@ -4,7 +4,16 @@ import type {
   CreateAccountInput,
   UpdateAccountInput,
   AccountType,
+  DashboardSummaryResponseDto,
+  DashboardKPICard,
+  DashboardQueryFilter,
 } from '@accounting/contracts';
+
+export type {
+  DashboardSummaryResponseDto,
+  DashboardKPICard,
+  DashboardQueryFilter,
+};
 
 export interface AuthUser {
   id: string;
@@ -295,3 +304,191 @@ export const accountsApi = {
     );
   },
 };
+
+/**
+ * Enterprise Inventory & Warehouse API operations
+ */
+export const inventoryApi = {
+  async getOverview(companyId: string): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/overview`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async initStandard(companyId: string): Promise<{ success: boolean; message: string; data: any }> {
+    return apiClient(`/companies/${companyId}/inventory/init-standard`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async listUoms(companyId: string): Promise<any[]> {
+    return apiClient(`/companies/${companyId}/inventory/uoms`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async createUom(companyId: string, data: any): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/uoms`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(data),
+    });
+  },
+
+  async listCategories(companyId: string): Promise<any[]> {
+    return apiClient(`/companies/${companyId}/inventory/categories`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async createCategory(companyId: string, data: any): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/categories`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(data),
+    });
+  },
+
+  async listBrands(companyId: string): Promise<any[]> {
+    return apiClient(`/companies/${companyId}/inventory/brands`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async createBrand(companyId: string, data: any): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/brands`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(data),
+    });
+  },
+
+  async listWarehouses(companyId: string): Promise<any[]> {
+    return apiClient(`/companies/${companyId}/inventory/warehouses`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async createWarehouse(companyId: string, data: any): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/warehouses`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(data),
+    });
+  },
+
+  async listBins(companyId: string, warehouseId: string): Promise<any[]> {
+    return apiClient(`/companies/${companyId}/inventory/warehouses/${warehouseId}/bins`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async createBin(companyId: string, data: any): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/bins`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(data),
+    });
+  },
+
+  async listItems(
+    companyId: string,
+    params?: { search?: string; categoryId?: string; type?: string; limit?: number; offset?: number }
+  ): Promise<{ items: any[]; total: number }> {
+    const query = new URLSearchParams();
+    if (params?.search) query.set('search', params.search);
+    if (params?.categoryId) query.set('categoryId', params.categoryId);
+    if (params?.type) query.set('type', params.type);
+    if (params?.limit !== undefined) query.set('limit', String(params.limit));
+    if (params?.offset !== undefined) query.set('offset', String(params.offset));
+    const qs = query.toString();
+    return apiClient(`/companies/${companyId}/inventory/items${qs ? `?${qs}` : ''}`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async getItem(companyId: string, id: string): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/items/${id}`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async createItem(companyId: string, data: any): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/items`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(data),
+    });
+  },
+
+  async getStockBalances(
+    companyId: string,
+    params?: { warehouseId?: string; itemId?: string }
+  ): Promise<any[]> {
+    const query = new URLSearchParams();
+    if (params?.warehouseId) query.set('warehouseId', params.warehouseId);
+    if (params?.itemId) query.set('itemId', params.itemId);
+    const qs = query.toString();
+    return apiClient(`/companies/${companyId}/inventory/stock-balances${qs ? `?${qs}` : ''}`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async listTransfers(companyId: string): Promise<any[]> {
+    return apiClient(`/companies/${companyId}/inventory/transfers`, {
+      method: 'GET',
+      headers: { 'x-company-id': companyId },
+    });
+  },
+
+  async createTransfer(companyId: string, data: any): Promise<any> {
+    return apiClient(`/companies/${companyId}/inventory/transfers`, {
+      method: 'POST',
+      headers: { 'x-company-id': companyId },
+      body: JSON.stringify(data),
+    });
+  },
+};
+
+export const dashboardApi = {
+  async getSummary(
+    companyId: string,
+    params?: DashboardQueryFilter
+  ): Promise<DashboardSummaryResponseDto> {
+    const query = new URLSearchParams();
+    if (params?.from) query.set('from', params.from);
+    if (params?.to) query.set('to', params.to);
+    if (params?.compareTo) query.set('compareTo', params.compareTo);
+    if (params?.branchId) query.set('branchId', params.branchId);
+    if (params?.currency) query.set('currency', params.currency);
+    const qs = query.toString();
+    return apiClient<DashboardSummaryResponseDto>(
+      `/companies/${companyId}/dashboard/summary${qs ? `?${qs}` : ''}`,
+      {
+        method: 'GET',
+        headers: { 'x-company-id': companyId },
+      }
+    );
+  },
+
+  async seedDemo(companyId: string): Promise<{ success: boolean; message: string; seededEntriesCount: number }> {
+    return apiClient<{ success: boolean; message: string; seededEntriesCount: number }>(
+      `/companies/${companyId}/dashboard/seed-demo`,
+      {
+        method: 'POST',
+        headers: { 'x-company-id': companyId },
+      }
+    );
+  },
+};
+

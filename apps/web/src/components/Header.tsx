@@ -72,9 +72,9 @@ export function Header({
     <header
       style={{
         height: '62px',
-        backgroundColor: 'rgba(17, 26, 46, 0.95)',
+        backgroundColor: 'var(--surface-1)',
         backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid #1D2A44',
+        borderBottom: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -94,7 +94,7 @@ export function Header({
           style={{
             background: 'none',
             border: 'none',
-            color: '#8A97B2',
+            color: 'var(--text-secondary)',
             padding: '6px',
             display: 'none',
             borderRadius: '6px',
@@ -114,23 +114,23 @@ export function Header({
               gap: '8px',
               padding: '6px 12px',
               borderRadius: '7px',
-              backgroundColor: '#16223A',
-              border: '1px solid #22304D',
-              color: '#F0F4FA',
+              backgroundColor: 'var(--surface-3)',
+              border: '1px solid var(--border-card)',
+              color: 'var(--text-primary)',
               fontSize: '13px',
               fontWeight: 500,
               maxWidth: '260px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+              boxShadow: 'var(--shadow-sm)',
               transition: 'border-color 150ms ease, background-color 150ms ease',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(201, 162, 75, 0.4)')}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#22304D')}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--gold-hover)')}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-card)')}
           >
-            <Building2 size={16} color="#C9A24B" />
+            <Building2 size={16} color="var(--gold)" />
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {selectedCompany}
             </span>
-            <ChevronDown size={14} color="#8A97B2" />
+            <ChevronDown size={14} color="var(--text-secondary)" />
           </button>
 
           {showCompanyMenu && (
@@ -140,10 +140,10 @@ export function Header({
                 top: 'calc(100% + 6px)',
                 insetInlineStart: 0,
                 width: '300px',
-                backgroundColor: '#16223A',
-                border: '1px solid #22304D',
+                backgroundColor: 'var(--surface-2)',
+                border: '1px solid var(--border-card)',
                 borderRadius: '8px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                boxShadow: 'var(--shadow-elevated)',
                 padding: '8px',
                 zIndex: 40,
               }}
@@ -152,10 +152,10 @@ export function Header({
                 style={{
                   fontSize: '10px',
                   fontWeight: 700,
-                  color: '#8A97B2',
+                  color: 'var(--text-muted)',
                   letterSpacing: '0.5px',
                   padding: '6px 8px',
-                  borderBottom: '1px solid #22304D',
+                  borderBottom: '1px solid var(--border-subtle)',
                   marginBottom: '4px',
                 }}
               >
@@ -171,14 +171,14 @@ export function Header({
                   style={{
                     padding: '8px 10px',
                     borderRadius: '6px',
-                    backgroundColor: selectedCompany === c.name ? '#111A2E' : 'transparent',
-                    border: selectedCompany === c.name ? '1px solid #C9A24B' : '1px solid transparent',
+                    backgroundColor: selectedCompany === c.name ? 'var(--surface-3)' : 'transparent',
+                    border: selectedCompany === c.name ? '1px solid var(--gold)' : '1px solid transparent',
                     cursor: 'pointer',
                     marginBottom: '2px',
                   }}
                 >
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#E6EAF2' }}>{c.name}</div>
-                  <div style={{ fontSize: '11px', color: '#8A97B2', marginTop: '2px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{c.name}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
                     {c.branch} • TRN: {c.trn}
                   </div>
                 </div>
@@ -187,8 +187,8 @@ export function Header({
                 style={{
                   padding: '8px 10px',
                   fontSize: '11px',
-                  color: '#C9A24B',
-                  backgroundColor: 'rgba(201, 162, 75, 0.08)',
+                  color: 'var(--gold)',
+                  backgroundColor: 'var(--gold-dim)',
                   borderRadius: '6px',
                   marginTop: '6px',
                   display: 'flex',
@@ -210,15 +210,15 @@ export function Header({
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            backgroundColor: '#16223A',
-            border: '1px solid #22304D',
+            backgroundColor: 'var(--surface-3)',
+            border: '1px solid var(--border-card)',
             borderRadius: '7px',
             padding: '5px 10px',
             width: '280px',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
-          <Search size={14} color="#8A97B2" />
+          <Search size={14} color="var(--text-muted)" />
           <input
             type="text"
             value={searchQuery}
@@ -228,7 +228,7 @@ export function Header({
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              color: '#F0F4FA',
+              color: 'var(--text-primary)',
               fontSize: '12px',
               width: '100%',
             }}
@@ -238,9 +238,9 @@ export function Header({
             style={{
               fontSize: '10px',
               fontWeight: 600,
-              color: '#7E8DA6',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid #22304D',
+              color: 'var(--text-muted)',
+              backgroundColor: 'var(--surface-subtle)',
+              border: '1px solid var(--border-card)',
               borderRadius: '4px',
               padding: '1px 5px',
               letterSpacing: '0.2px',
@@ -271,14 +271,14 @@ export function Header({
             alignItems: 'center',
             gap: '6px',
             padding: '6px 10px',
-            backgroundColor: '#16223A',
-            border: '1px solid #22304D',
+            backgroundColor: 'var(--surface-3)',
+            border: '1px solid var(--border-card)',
             borderRadius: '7px',
             fontSize: '12px',
-            color: '#94A3B8',
+            color: 'var(--text-secondary)',
           }}
         >
-          <Calendar size={14} color="#C9A24B" />
+          <Calendar size={14} color="var(--gold)" />
           <span>{dict.header.fiscalYear}</span>
         </div>
 
@@ -290,9 +290,9 @@ export function Header({
               width: '34px',
               height: '34px',
               borderRadius: '7px',
-              backgroundColor: '#16223A',
-              border: '1px solid #22304D',
-              color: '#8A97B2',
+              backgroundColor: 'var(--surface-3)',
+              border: '1px solid var(--border-card)',
+              color: 'var(--text-secondary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -300,12 +300,12 @@ export function Header({
               transition: 'border-color 150ms ease, color 150ms ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(201, 162, 75, 0.4)';
-              e.currentTarget.style.color = '#F0F4FA';
+              e.currentTarget.style.borderColor = 'var(--gold-hover)';
+              e.currentTarget.style.color = 'var(--text-primary)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#22304D';
-              e.currentTarget.style.color = '#8A97B2';
+              e.currentTarget.style.borderColor = 'var(--border-card)';
+              e.currentTarget.style.color = 'var(--text-secondary)';
             }}
             aria-label="View notifications"
           >
@@ -318,8 +318,8 @@ export function Header({
                 width: '6px',
                 height: '6px',
                 borderRadius: '50%',
-                backgroundColor: '#2FBF8F',
-                boxShadow: '0 0 6px rgba(47, 191, 143, 0.6)',
+                backgroundColor: 'var(--success)',
+                boxShadow: '0 0 6px var(--success-glow)',
               }}
             />
           </button>
@@ -331,28 +331,28 @@ export function Header({
                 top: 'calc(100% + 6px)',
                 insetInlineEnd: 0,
                 width: '280px',
-                backgroundColor: '#16223A',
-                border: '1px solid #22304D',
+                backgroundColor: 'var(--surface-2)',
+                border: '1px solid var(--border-card)',
                 borderRadius: '8px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                boxShadow: 'var(--shadow-elevated)',
                 padding: '12px',
                 zIndex: 40,
               }}
             >
-              <div style={{ fontSize: '12px', fontWeight: 700, color: '#E6EAF2', marginBottom: '8px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
                 {dict.header.notificationsTitle}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ display: 'flex', gap: '8px', fontSize: '11px', color: '#8A97B2' }}>
-                  <CheckCircle2 size={14} color="#2FBF8F" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div style={{ display: 'flex', gap: '8px', fontSize: '11px', color: 'var(--text-secondary)' }}>
+                  <CheckCircle2 size={14} color="var(--success)" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
-                    <span style={{ color: '#E6EAF2', fontWeight: 500 }}>{dict.header.notifLedgerBalanced}</span>
+                    <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{dict.header.notifLedgerBalanced}</span>
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: '8px', fontSize: '11px', color: '#8A97B2' }}>
-                  <CheckCircle2 size={14} color="#C9A24B" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div style={{ display: 'flex', gap: '8px', fontSize: '11px', color: 'var(--text-secondary)' }}>
+                  <CheckCircle2 size={14} color="var(--gold)" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
-                    <span style={{ color: '#E6EAF2', fontWeight: 500 }}>{dict.header.notifMongoCluster}</span>
+                    <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{dict.header.notifMongoCluster}</span>
                   </div>
                 </div>
               </div>
@@ -370,9 +370,9 @@ export function Header({
               gap: '8px',
               padding: '4px 8px',
               borderRadius: '6px',
-              backgroundColor: '#16223A',
-              border: '1px solid #22304D',
-              color: '#E6EAF2',
+              backgroundColor: 'var(--surface-3)',
+              border: '1px solid var(--border-card)',
+              color: 'var(--text-primary)',
             }}
           >
             <div
@@ -380,18 +380,18 @@ export function Header({
                 width: '26px',
                 height: '26px',
                 borderRadius: '50%',
-                backgroundColor: '#22304D',
+                backgroundColor: 'var(--surface-hover)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <User size={14} color="#C9A24B" />
+              <User size={14} color="var(--gold)" />
             </div>
             <span style={{ fontSize: '12px', fontWeight: 600 }}>
               {user?.fullName?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
             </span>
-            <ChevronDown size={12} color="#8A97B2" />
+            <ChevronDown size={12} color="var(--text-secondary)" />
           </button>
 
           {showUserMenu && (
@@ -401,29 +401,29 @@ export function Header({
                 top: 'calc(100% + 6px)',
                 insetInlineEnd: 0,
                 width: '240px',
-                backgroundColor: '#16223A',
-                border: '1px solid #22304D',
+                backgroundColor: 'var(--surface-2)',
+                border: '1px solid var(--border-card)',
                 borderRadius: '8px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                boxShadow: 'var(--shadow-elevated)',
                 padding: '12px',
                 zIndex: 40,
               }}
             >
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#E6EAF2' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                 {user?.fullName || 'User'}
               </div>
-              <div style={{ fontSize: '11px', color: '#8A97B2', wordBreak: 'break-all' }}>{user?.email}</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-secondary)', wordBreak: 'break-all' }}>{user?.email}</div>
               <div
                 style={{
                   marginTop: '10px',
                   paddingTop: '10px',
-                  borderTop: '1px solid #22304D',
+                  borderTop: '1px solid var(--border-subtle)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '8px',
                 }}
               >
-                <div style={{ fontSize: '11px', color: '#2FBF8F', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ fontSize: '11px', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <CheckCircle2 size={12} />
                   <span>{dict.header.sessionActive}</span>
                 </div>
@@ -433,7 +433,7 @@ export function Header({
                     width: '100%',
                     background: 'none',
                     border: 'none',
-                    color: '#EC5A60',
+                    color: 'var(--danger)',
                     fontSize: '12px',
                     fontWeight: 500,
                     cursor: 'pointer',

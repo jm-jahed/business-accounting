@@ -22,6 +22,7 @@ const VALID_CANONICAL_PAGES = new Set([
   'ledger',
   'bills',
   'banking',
+  'inventory',
 ]);
 
 export default async function StoreCanonicalPage({ params }: PageProps) {

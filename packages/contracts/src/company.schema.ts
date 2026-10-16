@@ -27,6 +27,7 @@ export const CompanyInputSchema = z.object({
   fiscalYearStartMonth: z.number().int().min(1).max(12).default(1),
   countryCode: z.string().trim().length(2).default('AE'),
   industryType: z.enum(['retail', 'supermarket', 'restaurant', 'trading', 'manufacturing', 'services', 'general']).default('general'),
+  businessTypes: z.array(z.string()).default(['retail']),
   enabledModules: z.array(z.string()).default(['accounting']),
   plan: z.string().default('starter'),
   subscriptionStatus: SubscriptionStatusEnum.default('trial'),

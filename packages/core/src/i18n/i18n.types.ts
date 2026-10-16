@@ -23,6 +23,7 @@ export interface TranslationDictionary {
     readonly generalLedger: string;
     readonly salesInvoices: string;
     readonly purchasesExpenses: string;
+    readonly inventory: string;
     readonly cashBanking: string;
     readonly financialReports: string;
     readonly auditTrail: string;

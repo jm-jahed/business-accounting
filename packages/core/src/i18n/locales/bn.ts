@@ -7,6 +7,7 @@ export const bn: TranslationDictionary = Object.freeze({
     generalLedger: 'সাধারণ খতিয়ান',
     salesInvoices: 'বিক্রয় ও ইনভয়েস',
     purchasesExpenses: 'ক্রয় ও খরচ',
+    inventory: 'ইনভেন্টরি ও ওয়্যারহাউস',
     cashBanking: 'নগদ ও ব্যাংকিং',
     financialReports: 'আর্থিক বিবরণী',
     auditTrail: 'নিরীক্ষা ট্রেইল',

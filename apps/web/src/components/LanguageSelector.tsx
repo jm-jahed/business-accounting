@@ -91,22 +91,22 @@ export function LanguageSelector() {
           alignItems: 'center',
           gap: '6px',
           padding: '6px 10px',
-          backgroundColor: '#16223A',
-          border: '1px solid #22304D',
+          backgroundColor: 'var(--surface-3)',
+          border: '1px solid var(--border-card)',
           borderRadius: '7px',
-          color: '#F0F4FA',
+          color: 'var(--text-primary)',
           fontSize: '12px',
           fontWeight: 500,
-          boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+          boxShadow: 'var(--shadow-sm)',
           transition: 'all 150ms ease',
         }}
         aria-label={dict.header.language}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        <Globe size={14} color="#C9A24B" />
+        <Globe size={14} color="var(--gold)" />
         <span>{current.nativeName}</span>
-        <ChevronDown size={12} color="#8A97B2" />
+        <ChevronDown size={12} color="var(--text-secondary)" />
       </button>
 
       {isOpen && (
@@ -118,10 +118,10 @@ export function LanguageSelector() {
             top: 'calc(100% + 6px)',
             insetInlineEnd: 0,
             width: '220px',
-            backgroundColor: '#16223A',
-            border: '1px solid #22304D',
+            backgroundColor: 'var(--surface-2)',
+            border: '1px solid var(--border-card)',
             borderRadius: '8px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+            boxShadow: 'var(--shadow-elevated)',
             padding: '8px',
             zIndex: 45,
           }}
@@ -130,10 +130,10 @@ export function LanguageSelector() {
             style={{
               fontSize: '10px',
               fontWeight: 700,
-              color: '#8A97B2',
+              color: 'var(--text-muted)',
               letterSpacing: '0.5px',
               padding: '4px 8px 6px',
-              borderBottom: '1px solid #22304D',
+              borderBottom: '1px solid var(--border-subtle)',
               marginBottom: '4px',
             }}
           >
@@ -166,11 +166,11 @@ export function LanguageSelector() {
                   padding: '7px 10px',
                   borderRadius: '6px',
                   backgroundColor: isSelected
-                    ? '#111A2E'
+                    ? 'var(--surface-3)'
                     : isFocused
-                    ? 'rgba(201, 162, 75, 0.12)'
+                    ? 'var(--gold-dim)'
                     : 'transparent',
-                  color: isSelected ? '#C9A24B' : '#E6EAF2',
+                  color: isSelected ? 'var(--gold)' : 'var(--text-primary)',
                   cursor: 'pointer',
                   fontSize: '13px',
                   outline: 'none',
@@ -180,9 +180,9 @@ export function LanguageSelector() {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ fontWeight: isSelected ? 600 : 400 }}>{item.nativeName}</span>
-                  <span style={{ fontSize: '11px', color: '#8A97B2' }}>({item.label})</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>({item.label})</span>
                 </div>
-                {isSelected && <Check size={14} color="#C9A24B" />}
+                {isSelected && <Check size={14} color="var(--gold)" />}
               </div>
             );
           })}

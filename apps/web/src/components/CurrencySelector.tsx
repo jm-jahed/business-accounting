@@ -115,25 +115,25 @@ export function CurrencySelector() {
           alignItems: 'center',
           gap: '6px',
           padding: '6px 10px',
-          backgroundColor: '#16223A',
-          border: '1px solid #22304D',
+          backgroundColor: 'var(--surface-3)',
+          border: '1px solid var(--border-card)',
           borderRadius: '7px',
-          color: '#F0F4FA',
+          color: 'var(--text-primary)',
           fontSize: '12px',
           fontWeight: 500,
-          boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+          boxShadow: 'var(--shadow-sm)',
           transition: 'all 150ms ease',
         }}
         aria-label={dict.currency.selectCurrency}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        <Coins size={14} color="#C9A24B" />
+        <Coins size={14} color="var(--gold)" />
         <span style={{ fontWeight: 600 }}>{displayCurrency}</span>
-        <span style={{ color: '#8A97B2', fontSize: '11px' }}>
+        <span style={{ color: 'var(--text-secondary)', fontSize: '11px' }}>
           (<bdi dir="ltr">{currentMeta.symbol}</bdi>)
         </span>
-        <ChevronDown size={12} color="#8A97B2" />
+        <ChevronDown size={12} color="var(--text-secondary)" />
       </button>
 
       {isOpen && (
@@ -145,10 +145,10 @@ export function CurrencySelector() {
             top: 'calc(100% + 6px)',
             insetInlineEnd: 0,
             width: '240px',
-            backgroundColor: '#16223A',
-            border: '1px solid #22304D',
+            backgroundColor: 'var(--surface-2)',
+            border: '1px solid var(--border-card)',
             borderRadius: '8px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+            boxShadow: 'var(--shadow-elevated)',
             padding: '8px',
             zIndex: 45,
           }}
@@ -157,10 +157,10 @@ export function CurrencySelector() {
             style={{
               fontSize: '10px',
               fontWeight: 700,
-              color: '#8A97B2',
+              color: 'var(--text-muted)',
               letterSpacing: '0.5px',
               padding: '4px 8px 6px',
-              borderBottom: '1px solid #22304D',
+              borderBottom: '1px solid var(--border-subtle)',
               marginBottom: '4px',
             }}
           >
@@ -195,11 +195,11 @@ export function CurrencySelector() {
                   padding: '7px 10px',
                   borderRadius: '6px',
                   backgroundColor: isSelected
-                    ? '#111A2E'
+                    ? 'var(--surface-3)'
                     : isFocused
-                    ? 'rgba(201, 162, 75, 0.12)'
+                    ? 'var(--gold-dim)'
                     : 'transparent',
-                  color: isSelected ? '#C9A24B' : '#E6EAF2',
+                  color: isSelected ? 'var(--gold)' : 'var(--text-primary)',
                   cursor: 'pointer',
                   fontSize: '13px',
                   outline: 'none',
@@ -212,7 +212,7 @@ export function CurrencySelector() {
                   <span
                     style={{
                       fontSize: '12px',
-                      color: isSelected ? '#C9A24B' : '#8A97B2',
+                      color: isSelected ? 'var(--gold)' : 'var(--text-secondary)',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
@@ -222,10 +222,10 @@ export function CurrencySelector() {
                   </span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                  <span style={{ fontSize: '11px', color: '#8A97B2' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                     <bdi dir="ltr">{meta.symbol}</bdi>
                   </span>
-                  {isSelected && <Check size={14} color="#C9A24B" />}
+                  {isSelected && <Check size={14} color="var(--gold)" />}
                 </div>
               </div>
             );
@@ -234,9 +234,9 @@ export function CurrencySelector() {
           <div
             style={{
               fontSize: '10px',
-              color: '#8A97B2',
+              color: 'var(--text-muted)',
               padding: '6px 8px 2px',
-              borderTop: '1px solid #22304D',
+              borderTop: '1px solid var(--border-subtle)',
               marginTop: '6px',
               display: 'flex',
               alignItems: 'center',

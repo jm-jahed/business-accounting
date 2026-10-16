@@ -2,7 +2,7 @@ import { Types, ClientSession, isValidObjectId } from 'mongoose';
 import { Account, IAccount } from '../models/Account.js';
 import { Company } from '../models/Company.js';
 import { Branch } from '../models/Branch.js';
-import { ChartOfAccountInput, AccountType, getNormalBalanceForAccountType } from '@accounting/contracts';
+import { ChartOfAccountInput, AccountType, AccountSystemRole, getNormalBalanceForAccountType } from '@accounting/contracts';
 import { TenantContext, validateTenantAccess, createTenantScopedFilter, TenantAuthorizationError } from './tenant.context.js';
 
 export class AccountValidationError extends Error {
@@ -94,6 +94,7 @@ export class AccountService {
       code: input.code.trim(),
       name: input.name.trim(),
       type: input.type,
+      systemRole: input.systemRole || null,
       normalBalance,
       parentId: parentObjId,
       currency: input.currency || company.currency || 'AED',
@@ -373,33 +374,34 @@ export class AccountService {
       code: string;
       name: string;
       type: AccountType;
+      systemRole?: AccountSystemRole;
       isSystem: boolean;
       description: string;
     }> = [
       // Assets (1000 - 1999)
-      { code: '1010', name: 'Cash on Hand', type: 'ASSET', isSystem: true, description: 'Petty cash and cash registers' },
-      { code: '1020', name: 'Bank Operating Account', type: 'ASSET', isSystem: true, description: 'Primary commercial bank account' },
-      { code: '1200', name: 'Accounts Receivable (AR)', type: 'ASSET', isSystem: true, description: 'Unsettled customer sales invoices' },
-      { code: '1300', name: 'Merchandise Inventory', type: 'ASSET', isSystem: true, description: 'Stock held for resale' },
+      { code: '1010', name: 'Cash on Hand', type: 'ASSET', systemRole: 'CASH', isSystem: true, description: 'Petty cash and cash registers' },
+      { code: '1020', name: 'Bank Operating Account', type: 'ASSET', systemRole: 'BANK', isSystem: true, description: 'Primary commercial bank account' },
+      { code: '1200', name: 'Accounts Receivable (AR)', type: 'ASSET', systemRole: 'RECEIVABLE', isSystem: true, description: 'Unsettled customer sales invoices' },
+      { code: '1300', name: 'Merchandise Inventory', type: 'ASSET', systemRole: 'INVENTORY', isSystem: true, description: 'Stock held for resale' },
       { code: '1500', name: 'Office & Facility Equipment', type: 'ASSET', isSystem: false, description: 'Fixed operational assets' },
       // Liabilities (2000 - 2999)
-      { code: '2010', name: 'Accounts Payable (AP)', type: 'LIABILITY', isSystem: true, description: 'Unsettled supplier bills' },
-      { code: '2210', name: 'VAT Output Tax Payable', type: 'LIABILITY', isSystem: true, description: 'VAT collected on commercial taxable sales' },
-      { code: '2220', name: 'VAT Input Tax Recoverable', type: 'LIABILITY', isSystem: true, description: 'VAT paid on purchases eligible for input credit' },
+      { code: '2010', name: 'Accounts Payable (AP)', type: 'LIABILITY', systemRole: 'PAYABLE', isSystem: true, description: 'Unsettled supplier bills' },
+      { code: '2210', name: 'VAT Output Tax Payable', type: 'LIABILITY', systemRole: 'VAT_OUTPUT', isSystem: true, description: 'VAT collected on commercial taxable sales' },
+      { code: '2220', name: 'VAT Input Tax Recoverable', type: 'LIABILITY', systemRole: 'VAT_INPUT', isSystem: true, description: 'VAT paid on purchases eligible for input credit' },
       { code: '2500', name: 'Accrued Operating Liabilities', type: 'LIABILITY', isSystem: false, description: 'Accrued expenses due for payment' },
       // Equity (3000 - 3999)
-      { code: '3010', name: "Owner's Capital", type: 'EQUITY', isSystem: true, description: 'Contributed capital by business owners' },
+      { code: '3010', name: "Owner's Capital", type: 'EQUITY', systemRole: 'EQUITY', isSystem: true, description: 'Contributed capital by business owners' },
       { code: '3100', name: 'Retained Earnings', type: 'EQUITY', isSystem: true, description: 'Accumulated profits and net earnings' },
       // Revenue (4000 - 4999)
-      { code: '4010', name: 'Sales Revenue', type: 'REVENUE', isSystem: true, description: 'Primary commercial operating revenue' },
+      { code: '4010', name: 'Sales Revenue', type: 'REVENUE', systemRole: 'REVENUE', isSystem: true, description: 'Primary commercial operating revenue' },
       { code: '4020', name: 'Services & Advisory Revenue', type: 'REVENUE', isSystem: false, description: 'Secondary service fees' },
       { code: '4090', name: 'Sales Discounts Allowed', type: 'REVENUE', isSystem: false, description: 'Contra-revenue cash and trade discounts' },
       // Expenses (5000 - 6999)
-      { code: '5010', name: 'Cost of Goods Sold (COGS)', type: 'EXPENSE', isSystem: true, description: 'Direct material and inventory acquisition cost' },
-      { code: '6010', name: 'Rent & Premises Expense', type: 'EXPENSE', isSystem: false, description: 'Store, warehouse, and office rent' },
-      { code: '6020', name: 'Salaries & Staff Compensation', type: 'EXPENSE', isSystem: false, description: 'Staff payroll and allowances' },
-      { code: '6030', name: 'Utilities & Telecommunications', type: 'EXPENSE', isSystem: false, description: 'Electricity, water, internet, and phone' },
-      { code: '6090', name: 'General & Administrative', type: 'EXPENSE', isSystem: false, description: 'Bank charges, government licenses, and sundry' },
+      { code: '5010', name: 'Cost of Goods Sold (COGS)', type: 'EXPENSE', systemRole: 'COGS', isSystem: true, description: 'Direct material and inventory acquisition cost' },
+      { code: '6010', name: 'Rent & Premises Expense', type: 'EXPENSE', systemRole: 'EXPENSE', isSystem: false, description: 'Store, warehouse, and office rent' },
+      { code: '6020', name: 'Salaries & Staff Compensation', type: 'EXPENSE', systemRole: 'EXPENSE', isSystem: false, description: 'Staff payroll and allowances' },
+      { code: '6030', name: 'Utilities & Telecommunications', type: 'EXPENSE', systemRole: 'EXPENSE', isSystem: false, description: 'Electricity, water, internet, and phone' },
+      { code: '6090', name: 'General & Administrative', type: 'EXPENSE', systemRole: 'EXPENSE', isSystem: false, description: 'Bank charges, government licenses, and sundry' },
     ];
 
     let createdCount = 0;
@@ -416,6 +418,7 @@ export class AccountService {
                 code: tpl.code,
                 name: tpl.name,
                 type: tpl.type,
+                systemRole: tpl.systemRole || null,
                 normalBalance: getNormalBalanceForAccountType(tpl.type),
                 isSystem: tpl.isSystem,
                 isActive: true,

@@ -44,11 +44,11 @@ export default function StoreLayout({ params, children }: StoreLayoutProps) {
       <div
         style={{
           minHeight: '100vh',
-          backgroundColor: '#0B1220',
+          backgroundColor: 'var(--bg-canvas)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#C9A24B',
+          color: 'var(--gold)',
         }}
       >
         <Loader2 size={32} style={{ animation: 'spin 1s linear infinite' }} />
@@ -74,8 +74,8 @@ export default function StoreLayout({ params, children }: StoreLayoutProps) {
       <div
         style={{
           minHeight: '100vh',
-          backgroundColor: '#0B1220',
-          color: '#F0F4FA',
+          backgroundColor: 'var(--bg-canvas)',
+          color: 'var(--text-primary)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -86,11 +86,11 @@ export default function StoreLayout({ params, children }: StoreLayoutProps) {
           style={{
             maxWidth: '480px',
             width: '100%',
-            backgroundColor: '#111A2E',
-            border: '1px solid #1D2A44',
+            backgroundColor: 'var(--surface-2)',
+            border: '1px solid var(--border-card)',
             borderRadius: '16px',
             padding: '32px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            boxShadow: 'var(--shadow-elevated)',
             textAlign: 'center',
           }}
         >
@@ -100,45 +100,45 @@ export default function StoreLayout({ params, children }: StoreLayoutProps) {
               height: '56px',
               margin: '0 auto 16px',
               borderRadius: '16px',
-              backgroundColor: 'rgba(236, 90, 96, 0.12)',
-              border: '1px solid rgba(236, 90, 96, 0.3)',
+              backgroundColor: 'var(--danger-dim)',
+              border: '1px solid var(--danger-border)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#EC5A60',
+              color: 'var(--danger)',
             }}
           >
             <ShieldAlert size={28} />
           </div>
 
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#F0F4FA', marginBottom: '8px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
             Store Access Restricted
           </h2>
 
-          <p style={{ fontSize: '13px', color: '#94A3B8', lineHeight: 1.5, marginBottom: '20px' }}>
-            You are signed in as <strong style={{ color: '#CBD5E1' }}>{user.email}</strong>, but your account is not an authorized member of store <code style={{ color: '#C9A24B', backgroundColor: '#0B1220', padding: '2px 6px', borderRadius: '4px' }}>{normalizedSlug}</code>.
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '20px' }}>
+            You are signed in as <strong style={{ color: 'var(--text-primary)' }}>{user.email}</strong>, but your account is not an authorized member of store <code style={{ color: 'var(--gold)', backgroundColor: 'var(--surface-3)', padding: '2px 6px', borderRadius: '4px' }}>{normalizedSlug}</code>.
           </p>
 
           <div
             style={{
-              backgroundColor: '#0B1220',
-              border: '1px solid #1D2A44',
+              backgroundColor: 'var(--surface-3)',
+              border: '1px solid var(--border-subtle)',
               borderRadius: '8px',
               padding: '12px 16px',
               marginBottom: '24px',
               fontSize: '12px',
-              color: '#7E8DA6',
+              color: 'var(--text-muted)',
               textAlign: 'left',
             }}
           >
-            <div style={{ fontWeight: 600, color: '#CBD5E1', marginBottom: '4px' }}>
+            <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>
               Your Authorized Stores:
             </div>
             {companies.map((c) => (
               <div key={c.companyId} style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                <Building2 size={13} style={{ color: '#C9A24B' }} />
-                <span style={{ color: '#F0F4FA' }}>{c.name}</span>
-                <span style={{ color: '#4B5B76' }}>({c.slug})</span>
+                <Building2 size={13} style={{ color: 'var(--gold)' }} />
+                <span style={{ color: 'var(--text-primary)' }}>{c.name}</span>
+                <span style={{ color: 'var(--text-muted)' }}>({c.slug})</span>
               </div>
             ))}
           </div>
@@ -149,8 +149,8 @@ export default function StoreLayout({ params, children }: StoreLayoutProps) {
               style={{
                 flex: 1,
                 height: '42px',
-                backgroundColor: '#C9A24B',
-                color: '#080D18',
+                backgroundColor: 'var(--gold)',
+                color: 'var(--bg-canvas)',
                 fontWeight: 600,
                 fontSize: '13px',
                 borderRadius: '8px',
@@ -170,9 +170,9 @@ export default function StoreLayout({ params, children }: StoreLayoutProps) {
               style={{
                 height: '42px',
                 padding: '0 16px',
-                backgroundColor: '#16223A',
-                border: '1px solid #22304D',
-                color: '#CBD5E1',
+                backgroundColor: 'var(--surface-3)',
+                border: '1px solid var(--border-default)',
+                color: 'var(--text-secondary)',
                 fontSize: '13px',
                 borderRadius: '8px',
                 cursor: 'pointer',

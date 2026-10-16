@@ -7,6 +7,7 @@ export interface JwtUserPayload {
   email: string;
   fullName: string;
   sessionFamily?: string;
+  tokenType?: 'CLIENT';
 }
 
 export interface JwtRefreshPayload {
@@ -14,6 +15,7 @@ export interface JwtRefreshPayload {
   email: string;
   fullName: string;
   sessionFamily: string;
+  tokenType?: 'CLIENT';
   jti?: string;
 }
 
@@ -94,23 +96,33 @@ export class JwtService {
   }
 
   public signAccessToken(payload: JwtUserPayload): string {
-    return jwt.sign(payload, this.accessSecret, {
+    const enriched = { ...payload, tokenType: payload.tokenType || 'CLIENT' };
+    return jwt.sign(enriched, this.accessSecret, {
       expiresIn: this.accessExpiry as any,
     });
   }
 
   public signRefreshToken(payload: JwtRefreshPayload): string {
-    return jwt.sign(payload, this.refreshSecret, {
+    const enriched = { ...payload, tokenType: payload.tokenType || 'CLIENT' };
+    return jwt.sign(enriched, this.refreshSecret, {
       expiresIn: this.refreshExpiry as any,
     });
   }
 
   public verifyAccessToken(token: string): JwtUserPayload {
-    return jwt.verify(token, this.accessSecret) as JwtUserPayload;
+    const payload = jwt.verify(token, this.accessSecret) as any;
+    if (payload.tokenType && payload.tokenType !== 'CLIENT') {
+      throw new Error('Invalid token scope: Non-client token presented to client endpoint.');
+    }
+    return payload as JwtUserPayload;
   }
 
   public verifyRefreshToken(token: string): JwtRefreshPayload {
-    return jwt.verify(token, this.refreshSecret) as JwtRefreshPayload;
+    const payload = jwt.verify(token, this.refreshSecret) as any;
+    if (payload.tokenType && payload.tokenType !== 'CLIENT') {
+      throw new Error('Invalid token scope: Non-client refresh token presented.');
+    }
+    return payload as JwtRefreshPayload;
   }
 
   /**

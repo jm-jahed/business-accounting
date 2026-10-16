@@ -7,6 +7,7 @@ export const en: TranslationDictionary = Object.freeze({
     generalLedger: 'General Ledger',
     salesInvoices: 'Sales & Invoices',
     purchasesExpenses: 'Purchases & Expenses',
+    inventory: 'Inventory & Warehouses',
     cashBanking: 'Cash & Banking',
     financialReports: 'Financial Reports',
     auditTrail: 'Audit Trail',

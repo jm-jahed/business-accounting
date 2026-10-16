@@ -207,9 +207,9 @@ export function AccountDrawer({
               bottom: 0,
               width: '100%',
               maxWidth: '520px',
-              backgroundColor: '#0E1626',
-              borderLeft: '1px solid #1D2A44',
-              boxShadow: '-8px 0 24px rgba(0, 0, 0, 0.45)',
+              backgroundColor: 'var(--surface-1)',
+              borderLeft: '1px solid var(--border)',
+              boxShadow: 'var(--shadow-drawer)',
               zIndex: 1001,
               display: 'flex',
               flexDirection: 'column',
@@ -219,21 +219,21 @@ export function AccountDrawer({
             <div
               style={{
                 padding: '20px 24px',
-                borderBottom: '1px solid #1D2A44',
+                borderBottom: '1px solid var(--border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                backgroundColor: '#111A2E',
+                backgroundColor: 'var(--surface-2)',
               }}
             >
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Building2 size={18} color="#C9A24B" />
-                  <h2 style={{ fontSize: '17px', fontWeight: 700, color: '#F0F4FA', margin: 0 }}>
+                  <Building2 size={18} color="var(--gold)" />
+                  <h2 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-ivory)', margin: 0 }}>
                     {isEditMode ? 'Edit Account' : 'New Chart of Account'}
                   </h2>
                 </div>
-                <p style={{ fontSize: '12px', color: '#8A97B2', margin: '4px 0 0' }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '4px 0 0' }}>
                   {isEditMode
                     ? `Account ${accountToEdit?.code} — ${accountToEdit?.name}`
                     : 'Create a new ledger account within your tenant chart'}
@@ -282,15 +282,15 @@ export function AccountDrawer({
 
               {/* Account Type Selector */}
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#DFBF6E', marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gold)', marginBottom: '8px' }}>
                   ACCOUNT CLASSIFICATION (TYPE)
                 </label>
                 {isEditMode ? (
                   <div
                     style={{
                       padding: '10px 14px',
-                      backgroundColor: '#16223A',
-                      border: '1px solid #22304D',
+                      backgroundColor: 'var(--surface-3)',
+                      border: '1px solid var(--border-card)',
                       borderRadius: '8px',
                       display: 'flex',
                       alignItems: 'center',
@@ -298,12 +298,12 @@ export function AccountDrawer({
                     }}
                   >
                     <div>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#F0F4FA' }}>{type}</span>
-                      <div style={{ fontSize: '11px', color: '#7E8DA6', marginTop: '2px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{type}</span>
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
                         Classification is permanently immutable to safeguard journal integrity.
                       </div>
                     </div>
-                    <Lock size={14} color="#C9A24B" />
+                    <Lock size={14} color="var(--gold)" />
                   </div>
                 ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
@@ -322,15 +322,15 @@ export function AccountDrawer({
                             textAlign: 'start',
                             borderRadius: '8px',
                             cursor: 'pointer',
-                            backgroundColor: isSelected ? 'rgba(201, 162, 75, 0.14)' : '#111A2E',
-                            border: isSelected ? '1px solid #C9A24B' : '1px solid #1D2A44',
+                            backgroundColor: isSelected ? 'var(--gold-dim)' : 'var(--surface-2)',
+                            border: isSelected ? '1px solid var(--gold)' : '1px solid var(--border-card)',
                             transition: 'all 0.15s ease',
                           }}
                         >
-                          <div style={{ fontSize: '12px', fontWeight: 700, color: isSelected ? '#DFBF6E' : '#F0F4FA' }}>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: isSelected ? 'var(--gold)' : 'var(--text-primary)' }}>
                             {t.label}
                           </div>
-                          <div style={{ fontSize: '10px', color: '#7E8DA6', marginTop: '2px' }}>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>
                             {t.type}
                           </div>
                         </button>
@@ -343,8 +343,8 @@ export function AccountDrawer({
               {/* Server-Derived Normal Balance Display */}
               <div
                 style={{
-                  backgroundColor: 'rgba(22, 34, 58, 0.7)',
-                  border: '1px solid #22304D',
+                  backgroundColor: 'var(--surface-3)',
+                  border: '1px solid var(--border-card)',
                   borderRadius: '8px',
                   padding: '12px 14px',
                   marginBottom: '20px',
@@ -354,10 +354,10 @@ export function AccountDrawer({
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#8A97B2', textTransform: 'uppercase' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                     Fundamental Normal Balance
                   </div>
-                  <div style={{ fontSize: '11px', color: '#7E8DA6', marginTop: '2px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
                     Auto-derived by kernel based on accounting equation
                   </div>
                 </div>
@@ -370,9 +370,9 @@ export function AccountDrawer({
                     borderRadius: '5px',
                     fontSize: '12px',
                     fontWeight: 700,
-                    backgroundColor: normalBalance === 'DEBIT' ? 'rgba(47, 191, 143, 0.12)' : 'rgba(96, 165, 250, 0.12)',
-                    color: normalBalance === 'DEBIT' ? '#2FBF8F' : '#60A5FA',
-                    border: normalBalance === 'DEBIT' ? '1px solid rgba(47, 191, 143, 0.3)' : '1px solid rgba(96, 165, 250, 0.3)',
+                    backgroundColor: normalBalance === 'DEBIT' ? 'var(--success-dim)' : 'var(--info-dim)',
+                    color: normalBalance === 'DEBIT' ? 'var(--success)' : 'var(--info)',
+                    border: normalBalance === 'DEBIT' ? '1px solid var(--success-border)' : '1px solid var(--info-border)',
                   }}
                 >
                   <Check size={12} /> {normalBalance}
@@ -382,11 +382,11 @@ export function AccountDrawer({
               {/* Account Code */}
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#DFBF6E' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--gold)' }}>
                     ACCOUNT CODE *
                   </label>
                   {isEditMode && accountToEdit?.isSystem && (
-                    <span style={{ fontSize: '10px', color: '#DFBF6E', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <span style={{ fontSize: '10px', color: 'var(--gold)', display: 'flex', alignItems: 'center', gap: '3px' }}>
                       <Lock size={10} /> Protected System Account
                     </span>
                   )}
@@ -400,24 +400,24 @@ export function AccountDrawer({
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    backgroundColor: isEditMode && accountToEdit?.isSystem ? '#16223A' : '#111A2E',
-                    border: '1px solid #1D2A44',
+                    backgroundColor: isEditMode && accountToEdit?.isSystem ? 'var(--surface-3)' : 'var(--surface-2)',
+                    border: '1px solid var(--border-card)',
                     borderRadius: '8px',
-                    color: '#F0F4FA',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
                   required
                 />
-                <span style={{ fontSize: '11px', color: '#7E8DA6', marginTop: '4px', display: 'block' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
                   Unique numeric or alphanumeric identifier within company
                 </span>
               </div>
 
               {/* Account Name */}
               <div style={{ marginBottom: '18px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#DFBF6E', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gold)', marginBottom: '6px' }}>
                   ACCOUNT NAME *
                 </label>
                 <input
@@ -428,10 +428,10 @@ export function AccountDrawer({
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    backgroundColor: '#111A2E',
-                    border: '1px solid #1D2A44',
+                    backgroundColor: 'var(--surface-2)',
+                    border: '1px solid var(--border-card)',
                     borderRadius: '8px',
-                    color: '#F0F4FA',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -443,10 +443,10 @@ export function AccountDrawer({
               {/* Parent Account Selector */}
               <div style={{ marginBottom: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#DFBF6E' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--gold)' }}>
                     PARENT ACCOUNT (SUB-ACCOUNT OF)
                   </label>
-                  <span style={{ fontSize: '10px', color: '#7E8DA6' }}>Optional</span>
+                  <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Optional</span>
                 </div>
                 <select
                   value={parentId}
@@ -454,10 +454,10 @@ export function AccountDrawer({
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    backgroundColor: '#111A2E',
-                    border: '1px solid #1D2A44',
+                    backgroundColor: 'var(--surface-2)',
+                    border: '1px solid var(--border-card)',
                     borderRadius: '8px',
-                    color: '#F0F4FA',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -470,7 +470,7 @@ export function AccountDrawer({
                     </option>
                   ))}
                 </select>
-                <span style={{ fontSize: '11px', color: '#7E8DA6', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <HelpCircle size={11} /> Only accounts of the same type ({type}) may be selected as parents.
                 </span>
               </div>
@@ -478,10 +478,10 @@ export function AccountDrawer({
               {/* Description */}
               <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#DFBF6E' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--gold)' }}>
                     DESCRIPTION & ACCOUNTING MEMO
                   </label>
-                  <span style={{ fontSize: '10px', color: '#7E8DA6' }}>Optional</span>
+                  <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Optional</span>
                 </div>
                 <textarea
                   rows={3}
@@ -491,10 +491,10 @@ export function AccountDrawer({
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    backgroundColor: '#111A2E',
-                    border: '1px solid #1D2A44',
+                    backgroundColor: 'var(--surface-2)',
+                    border: '1px solid var(--border-card)',
                     borderRadius: '8px',
-                    color: '#F0F4FA',
+                    color: 'var(--text-primary)',
                     fontSize: '13px',
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -509,15 +509,15 @@ export function AccountDrawer({
                   style={{
                     marginTop: '20px',
                     padding: '16px',
-                    backgroundColor: 'rgba(236, 90, 96, 0.05)',
-                    border: '1px solid rgba(236, 90, 96, 0.2)',
+                    backgroundColor: 'var(--danger-dim)',
+                    border: '1px solid var(--danger-border)',
                     borderRadius: '8px',
                   }}
                 >
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#EC5A60', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--danger)', marginBottom: '4px' }}>
                     Deactivate Account
                   </div>
-                  <p style={{ fontSize: '12px', color: '#8A97B2', margin: '0 0 12px' }}>
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
                     Deactivating prevents new transactions from posting to this account while preserving all historical journal lines. Hard deletion is prohibited.
                   </p>
 
@@ -530,7 +530,7 @@ export function AccountDrawer({
                         style={{
                           padding: '6px 12px',
                           borderRadius: '6px',
-                          backgroundColor: '#EC5A60',
+                          backgroundColor: 'var(--danger)',
                           border: 'none',
                           color: '#FFFFFF',
                           fontSize: '12px',
@@ -547,8 +547,8 @@ export function AccountDrawer({
                           padding: '6px 12px',
                           borderRadius: '6px',
                           backgroundColor: 'transparent',
-                          border: '1px solid #1D2A44',
-                          color: '#8A97B2',
+                          border: '1px solid var(--border-card)',
+                          color: 'var(--text-secondary)',
                           fontSize: '12px',
                           cursor: 'pointer',
                         }}
@@ -564,8 +564,8 @@ export function AccountDrawer({
                         padding: '6px 12px',
                         borderRadius: '6px',
                         backgroundColor: 'transparent',
-                        border: '1px solid rgba(236, 90, 96, 0.35)',
-                        color: '#EC5A60',
+                        border: '1px solid var(--danger-border)',
+                        color: 'var(--danger)',
                         fontSize: '12px',
                         fontWeight: 600,
                         cursor: 'pointer',
@@ -585,8 +585,8 @@ export function AccountDrawer({
             <div
               style={{
                 padding: '16px 24px',
-                borderTop: '1px solid #1D2A44',
-                backgroundColor: '#111A2E',
+                borderTop: '1px solid var(--border)',
+                backgroundColor: 'var(--surface-2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'flex-end',
@@ -601,8 +601,8 @@ export function AccountDrawer({
                   padding: '9px 18px',
                   borderRadius: '6px',
                   backgroundColor: 'transparent',
-                  border: '1px solid #1D2A44',
-                  color: '#8A97B2',
+                  border: '1px solid var(--border-card)',
+                  color: 'var(--text-secondary)',
                   fontSize: '13px',
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -618,16 +618,16 @@ export function AccountDrawer({
                 style={{
                   padding: '9px 20px',
                   borderRadius: '6px',
-                  backgroundColor: validationError ? '#2A3C60' : '#C9A24B',
+                  backgroundColor: validationError ? 'var(--surface-3)' : 'var(--gold)',
                   border: 'none',
-                  color: validationError ? '#7E8DA6' : '#0B1220',
+                  color: validationError ? 'var(--text-muted)' : '#0B1220',
                   fontSize: '13px',
                   fontWeight: 700,
                   cursor: validationError ? 'not-allowed' : 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  boxShadow: validationError ? 'none' : '0 2px 8px rgba(201, 162, 75, 0.25)',
+                  boxShadow: validationError ? 'none' : '0 2px 8px var(--gold-glow)',
                 }}
               >
                 <Save size={14} />

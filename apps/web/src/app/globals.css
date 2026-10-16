@@ -1,73 +1,314 @@
-:root {
-  /* Brand Canvas & Surface Palette (Stripe/Linear Layered Navy) */
-  --bg-main: #0B1220;
-  --bg-canvas: #080D18;
-  --surface: #111A2E;
-  --surface-card: #121C32;
-  --surface-elevated: #16223A;
-  --surface-hover: #1A2844;
-  --surface-subtle: rgba(22, 34, 58, 0.4);
+/* ==========================================================================
+   UNIVERSAL BUSINESS ACCOUNTING & MANAGEMENT SYSTEM — DESIGN SYSTEM & TOKENS
+   Core Palette: Deep Layered Navy, Surface Slate, Champagne Gold, Ivory Text
+   ========================================================================== */
 
-  /* Borders & Dividers */
-  --border: #22304D;
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-card: #1D2A44;
-  --border-card-hover: rgba(201, 162, 75, 0.35);
-
-  /* High Contrast Typography (WCAG AA & AAA Compliant) */
-  --text-primary: #F0F4FA;
-  --text-secondary: #94A3B8;
-  --text-muted: #7E8DA6;
-  --text-faint: #4B5B76;
-
-  /* Enterprise Gold Accent System */
-  --gold: #C9A24B;
-  --gold-hover: #DFBF6E;
-  --gold-glow: rgba(201, 162, 75, 0.15);
-  --gold-dim: rgba(201, 162, 75, 0.08);
-
-  /* Status Accents */
-  --success: #2FBF8F;
-  --success-glow: rgba(47, 191, 143, 0.15);
-  --danger: #EC5A60;
-  --danger-glow: rgba(236, 90, 96, 0.15);
-  --warning: #E0A93B;
-
-  /* Elevation Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.25);
-  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
-  --shadow-gold: 0 2px 10px rgba(201, 162, 75, 0.25);
-
-  /* Typography Stacks */
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-family-arabic: "Segoe UI", Tahoma, "Noto Sans Arabic", Arial, sans-serif;
+/* --------------------------------------------------------------------------
+   Local & High-Fidelity Font Declarations with Resilient System Fallbacks
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: local('Inter'), local('Inter-Regular');
 }
 
+@font-face {
+  font-family: 'Noto Sans Bengali';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: local('Noto Sans Bengali'), local('SolaimanLipi'), local('Kalpurush');
+}
+
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: local('Noto Naskh Arabic'), local('Amiri'), local('Geeza Pro');
+}
+
+:root {
+  /* ------------------------------------------------------------------------
+     1. Brand Canvas & Layered Surfaces (Deep Layered Navy)
+     ------------------------------------------------------------------------ */
+  --bg-canvas: #070B14;           /* Deepest background behind floating shells */
+  --bg-main: #0B1220;             /* Primary workspace backdrop */
+  --surface-1: #0F172A;           /* Structural frames, sidebars, headers */
+  --surface-2: #111A2E;           /* Standard cards, tables, containers */
+  --surface-3: #16223A;           /* Elevated cards, inputs, popovers, drawers */
+  --surface-hover: #1A2844;       /* Interactive hover state */
+  --surface-active: #223356;      /* Active / pressed state */
+  --surface-subtle: rgba(22, 34, 58, 0.45); /* Muted containers */
+
+  /* Backward Compatibility Aliases for Existing Inline Styles */
+  --surface: var(--surface-2);
+  --surface-card: var(--surface-2);
+  --surface-elevated: var(--surface-3);
+
+  /* ------------------------------------------------------------------------
+     2. Borders, Dividers & Focus Rings
+     ------------------------------------------------------------------------ */
+  --border-subtle: rgba(255, 255, 255, 0.06);   /* Table row dividers */
+  --border: #1D2A44;                            /* Base container borders */
+  --border-card: #1D2A44;                       /* Card perimeter border */
+  --border-strong: #243452;                     /* Structural borders */
+  --border-card-hover: rgba(201, 162, 75, 0.35);/* Card hover perimeter */
+  --border-focus: rgba(201, 162, 75, 0.60);     /* Accessible focus ring */
+
+  /* ------------------------------------------------------------------------
+     3. High-Contrast Typography Hierarchy (WCAG AAA & AA Compliant)
+     ------------------------------------------------------------------------ */
+  --text-ivory: #F7F5F0;          /* Primary high-contrast text & headings */
+  --text-primary: #F0F4FA;        /* Standard high-legibility text */
+  --text-secondary: #94A3B8;      /* Labels, table headers, descriptions */
+  --text-muted: #64748B;          /* Placeholders, disabled states */
+  --text-faint: #475569;          /* Subtle timestamps, hints */
+
+  /* ------------------------------------------------------------------------
+     4. Enterprise Champagne Gold Accent System
+     ------------------------------------------------------------------------ */
+  --gold-50: #FBF7EE;
+  --gold-100: #F4EBD5;
+  --gold-300: #DFBF6E;
+  --gold-500: #C9A24B;            /* Primary brand gold */
+  --gold: #C9A24B;                /* Primary alias */
+  --gold-hover: #DFBF6E;          /* Interactive hover */
+  --gold-600: #B38C38;
+  --gold-glow: rgba(201, 162, 75, 0.18);
+  --gold-dim: rgba(201, 162, 75, 0.08);
+
+  /* ------------------------------------------------------------------------
+     5. Statutory & Accounting Semantic Status Accents
+     ------------------------------------------------------------------------ */
+  /* Positive / Posted / Assets */
+  --success: #10B981;
+  --success-hover: #059669;
+  --success-glow: rgba(16, 185, 129, 0.16);
+  --success-dim: rgba(16, 185, 129, 0.08);
+  --success-border: rgba(16, 185, 129, 0.30);
+
+  /* Negative / Void / Liabilities / Overdue */
+  --danger: #EF4444;
+  --danger-hover: #DC2626;
+  --danger-glow: rgba(239, 68, 68, 0.16);
+  --danger-dim: rgba(239, 68, 68, 0.08);
+  --danger-border: rgba(239, 68, 68, 0.30);
+
+  /* Pending / Draft / Attention */
+  --warning: #F59E0B;
+  --warning-hover: #D97706;
+  --warning-glow: rgba(245, 158, 11, 0.16);
+  --warning-dim: rgba(245, 158, 11, 0.08);
+  --warning-border: rgba(245, 158, 11, 0.30);
+
+  /* Informational / Revenue / Reconciled */
+  --info: #38BDF8;
+  --info-hover: #0284C7;
+  --info-glow: rgba(56, 189, 248, 0.16);
+  --info-dim: rgba(56, 189, 248, 0.08);
+  --info-border: rgba(56, 189, 248, 0.30);
+
+  /* Equity / Capital */
+  --equity: #8B5CF6;
+  --equity-glow: rgba(139, 92, 246, 0.16);
+  --equity-dim: rgba(139, 92, 246, 0.08);
+  --equity-border: rgba(139, 92, 246, 0.30);
+
+  /* ------------------------------------------------------------------------
+     6. Sizing, Radii & Elevations
+     ------------------------------------------------------------------------ */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 4px 16px -2px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 8px 24px -4px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-elevated: 0 12px 32px -4px rgba(0, 0, 0, 0.55), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+  --shadow-gold: 0 2px 10px rgba(201, 162, 75, 0.25);
+  --shadow-drawer: -8px 0 32px 0 rgba(0, 0, 0, 0.75);
+
+  /* ------------------------------------------------------------------------
+     7. Motion & Transitions
+     ------------------------------------------------------------------------ */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 180ms;
+  --duration-drawer: 240ms;
+
+  /* ------------------------------------------------------------------------
+     8. Font Family Stacks (English, Bengali, Arabic, Tabular Monospace)
+     ------------------------------------------------------------------------ */
+  --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-bengali: 'Noto Sans Bengali', 'SolaimanLipi', 'Kalpurush', -apple-system, sans-serif;
+  --font-family-arabic: 'Noto Naskh Arabic', 'Amiri', 'Geeza Pro', "Segoe UI", Tahoma, Arial, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, Monaco, monospace;
+
+  /* Legacy alias */
+  --font-family: var(--font-family-sans);
+}
+
+/* --------------------------------------------------------------------------
+   Light Theme Override (Unified, High-Contrast Tokens)
+   -------------------------------------------------------------------------- */
+[data-theme="light"] {
+  --bg-canvas: #F1F5F9;
+  --bg-main: #F8FAFC;
+  --surface-1: #FFFFFF;
+  --surface-2: #FFFFFF;
+  --surface-3: #F1F5F9;
+  --surface-hover: #E2E8F0;
+  --surface-active: #CBD5E1;
+  --surface-subtle: rgba(0, 0, 0, 0.04);
+
+  --surface: var(--surface-2);
+  --surface-card: var(--surface-2);
+  --surface-elevated: #FFFFFF;
+
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border: #E2E8F0;
+  --border-card: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --border-card-hover: rgba(162, 118, 31, 0.40);
+  --border-focus: rgba(162, 118, 31, 0.65);
+
+  --text-ivory: #0B1220;
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-faint: #94A3B8;
+
+  --gold-50: #FDFBF7;
+  --gold-100: #F7EEDB;
+  --gold-300: #C9A24B;
+  --gold-500: #A2761F;
+  --gold: #A2761F;
+  --gold-hover: #865E13;
+  --gold-600: #6E4D0B;
+  --gold-glow: rgba(162, 118, 31, 0.20);
+  --gold-dim: rgba(162, 118, 31, 0.08);
+
+  --success: #059669;
+  --success-hover: #047857;
+  --success-glow: rgba(5, 150, 105, 0.16);
+  --success-dim: rgba(5, 150, 105, 0.08);
+  --success-border: rgba(5, 150, 105, 0.30);
+
+  --danger: #DC2626;
+  --danger-hover: #B91C1C;
+  --danger-glow: rgba(220, 38, 38, 0.16);
+  --danger-dim: rgba(220, 38, 38, 0.08);
+  --danger-border: rgba(220, 38, 38, 0.30);
+
+  --warning: #D97706;
+  --warning-hover: #B45309;
+  --warning-glow: rgba(217, 119, 6, 0.16);
+  --warning-dim: rgba(217, 119, 6, 0.08);
+  --warning-border: rgba(217, 119, 6, 0.30);
+
+  --info: #0284C7;
+  --info-hover: #0369A1;
+  --info-glow: rgba(2, 132, 199, 0.16);
+  --info-dim: rgba(2, 132, 199, 0.08);
+  --info-border: rgba(2, 132, 199, 0.30);
+
+  --equity: #7C3AED;
+  --equity-hover: #6D28D9;
+  --equity-glow: rgba(124, 58, 237, 0.16);
+  --equity-dim: rgba(124, 58, 237, 0.08);
+  --equity-border: rgba(124, 58, 237, 0.30);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-elevated: 0 10px 25px rgba(0, 0, 0, 0.08);
+  --shadow-gold: 0 2px 8px rgba(162, 118, 31, 0.20);
+  --shadow-drawer: -4px 0 24px rgba(0, 0, 0, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   Universal Reset & Base Styles
+   -------------------------------------------------------------------------- */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html[dir="rtl"] {
+html {
+  font-family: var(--font-family-sans);
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[lang="bn"],
+[data-locale="bn"] {
+  font-family: var(--font-family-bengali);
+}
+
+html[dir="rtl"],
+html[lang="ar"],
+[data-locale="ar"] {
   font-family: var(--font-family-arabic);
 }
 
 body {
   background-color: var(--bg-main);
   color: var(--text-primary);
-  font-family: var(--font-family);
+  font-family: inherit;
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular Numerals for Financial Data */
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
+/* --------------------------------------------------------------------------
+   Accessible Focus-Visible Styling
+   -------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Accessible Reduced-Motion Support
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tabular Numerals for Financial Data & Ledgers
+   -------------------------------------------------------------------------- */
+.tabular-nums,
+.tabular-figure {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 a {
@@ -78,13 +319,17 @@ a {
 button {
   cursor: pointer;
   font-family: inherit;
+  background: none;
+  border: none;
 }
 
 input, select, textarea {
   font-family: inherit;
 }
 
-/* Enterprise Custom Scrollbar */
+/* --------------------------------------------------------------------------
+   Enterprise Custom Scrollbar
+   -------------------------------------------------------------------------- */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -103,7 +348,21 @@ input, select, textarea {
   background: #2D3E64;
 }
 
-/* Animations */
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* --------------------------------------------------------------------------
+   Animations & Keyframes
+   -------------------------------------------------------------------------- */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -117,7 +376,37 @@ input, select, textarea {
   animation: spin 1s linear infinite;
 }
 
-/* Stripe/Linear Layered Card Styling */
+/* --------------------------------------------------------------------------
+   Reusable Foundation Utility Classes
+   -------------------------------------------------------------------------- */
+
+/* Standard Layered ERP Card */
+.erp-card {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+}
+
+/* Interactive Card with Smooth Lift & Gold Sheen on Hover */
+.erp-card-interactive {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              border-color var(--duration-normal) ease,
+              box-shadow var(--duration-normal) ease;
+}
+
+.erp-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-card-hover);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Legacy Card Lift Class (Preserved for Existing Components) */
 .card-hover-lift {
   transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
 }
@@ -128,7 +417,157 @@ input, select, textarea {
   box-shadow: var(--shadow-card-hover) !important;
 }
 
-/* Asymmetric Financial Command Grid */
+/* Foundation Input */
+.erp-input {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--surface-3);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.4;
+  transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+}
+
+.erp-input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+.erp-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Foundation Badges */
+.erp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.erp-badge-gold {
+  background-color: var(--gold-dim);
+  color: var(--gold-hover);
+  border: 1px solid rgba(201, 162, 75, 0.35);
+}
+
+.erp-badge-success {
+  background-color: var(--success-dim);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+}
+
+.erp-badge-danger {
+  background-color: var(--danger-dim);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+}
+
+.erp-badge-warning {
+  background-color: var(--warning-dim);
+  color: var(--warning);
+  border: 1px solid var(--warning-border);
+}
+
+.erp-badge-info {
+  background-color: var(--info-dim);
+  color: var(--info);
+  border: 1px solid var(--info-border);
+}
+
+.erp-badge-equity {
+  background-color: var(--equity-dim);
+  color: var(--equity);
+  border: 1px solid var(--equity-border);
+}
+
+.erp-badge-neutral {
+  background-color: var(--surface-3);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-strong);
+}
+
+/* Foundation Buttons */
+.erp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast) ease;
+  white-space: nowrap;
+}
+
+.erp-btn-gold {
+  background-color: var(--gold);
+  color: #070B14;
+  box-shadow: var(--shadow-gold);
+}
+
+.erp-btn-gold:hover {
+  background-color: var(--gold-hover);
+  box-shadow: 0 4px 12px rgba(201, 162, 75, 0.35);
+}
+
+.erp-btn-secondary {
+  background-color: var(--surface-3);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+}
+
+.erp-btn-secondary:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--border-card-hover);
+}
+
+.erp-btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+}
+
+.erp-btn-outline:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--border-card-hover);
+}
+
+.erp-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.erp-btn-ghost:hover {
+  background-color: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.erp-btn-danger {
+  background-color: var(--danger-dim);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+}
+
+.erp-btn-danger:hover {
+  background-color: var(--danger);
+  color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   Existing Layout & Shell Components (Preserved for Current Screens)
+   -------------------------------------------------------------------------- */
 .asymmetric-command-grid {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
@@ -136,23 +575,22 @@ input, select, textarea {
   margin-bottom: 24px;
 }
 
-/* Context Strip */
 .context-strip {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 8px 14px;
-  background-color: rgba(22, 34, 58, 0.45);
-  border: 1px solid #1D2A44;
-  border-radius: 8px;
+  background-color: var(--surface-subtle);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
   margin-bottom: 20px;
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--text-secondary);
   flex-wrap: wrap;
   gap: 8px;
 }
 
-/* Responsive & RTL Layout Rules */
+/* Responsive Rules */
 @media (max-width: 1200px) {
   .asymmetric-command-grid {
     grid-template-columns: 1fr !important;
@@ -199,34 +637,12 @@ input, select, textarea {
   }
 }
 
-/* Light Theme Variables Override */
-[data-theme="light"] {
-  --bg-main: #F4F6F9;
-  --bg-canvas: #EAEFF5;
-  --surface: #FFFFFF;
-  --surface-card: #FFFFFF;
-  --surface-elevated: #F8FAFC;
-  --surface-hover: #F1F5F9;
-  --surface-subtle: rgba(0, 0, 0, 0.04);
-
-  --border: #CBD5E1;
-  --border-subtle: rgba(0, 0, 0, 0.08);
-  --border-card: #E2E8F0;
-  --border-card-hover: rgba(201, 162, 75, 0.5);
-
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --text-faint: #94A3B8;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
+/* ==========================================================================
+   Comprehensive Light Theme Component Rules (High-Contrast & Unified Tokens)
+   ========================================================================== */
 [data-theme="light"] body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
+  background-color: var(--bg-main) !important;
+  color: var(--text-primary) !important;
 }
 
 [data-theme="light"] .sidebar-container {
@@ -235,11 +651,76 @@ input, select, textarea {
 }
 
 [data-theme="light"] header {
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: rgba(255, 255, 255, 0.98) !important;
   border-color: #E2E8F0 !important;
 }
 
-/* cmdk Command Menu Item Hover */
+[data-theme="light"] .erp-card,
+[data-theme="light"] .erp-card-interactive {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+[data-theme="light"] .erp-card-interactive:hover {
+  border-color: var(--border-card-hover) !important;
+  box-shadow: var(--shadow-card-hover) !important;
+}
+
+/* Light Mode Tables */
+[data-theme="light"] table thead tr {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+  color: #475569 !important;
+}
+
+[data-theme="light"] table thead th {
+  color: #475569 !important;
+}
+
+[data-theme="light"] table tbody tr {
+  border-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] table tbody tr:hover {
+  background-color: #F8FAFC !important;
+}
+
+[data-theme="light"] table tfoot tr {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Light Mode Inputs, Selects & Forms */
+[data-theme="light"] .erp-input,
+[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background-color: #FFFFFF !important;
+  color: #1E293B !important;
+  border-color: #CBD5E1 !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 2px var(--gold-dim) !important;
+}
+
+[data-theme="light"] kbd {
+  background-color: #F1F5F9 !important;
+  color: #475569 !important;
+  border-color: #CBD5E1 !important;
+}
+
+/* cmdk Command Palette Light Theme */
 .cmdk-item {
   transition: background-color 100ms ease, color 100ms ease;
 }
@@ -248,4 +729,28 @@ input, select, textarea {
 .cmdk-item[data-selected="true"] {
   background-color: rgba(201, 162, 75, 0.15) !important;
   color: #DFBF6E !important;
+}
+
+[data-theme="light"] .cmdk-dialog,
+[data-theme="light"] [cmdk-root] {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #1E293B !important;
+  box-shadow: var(--shadow-elevated) !important;
+}
+
+[data-theme="light"] [cmdk-input] {
+  background-color: transparent !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] .cmdk-item {
+  color: #1E293B !important;
+}
+
+[data-theme="light"] .cmdk-item:hover,
+[data-theme="light"] .cmdk-item[data-selected="true"] {
+  background-color: rgba(162, 118, 31, 0.12) !important;
+  color: #865E13 !important;
 }

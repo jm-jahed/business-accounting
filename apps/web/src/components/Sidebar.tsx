@@ -14,6 +14,7 @@ import {
   Landmark,
   X,
   Layers,
+  Boxes,
   PanelLeftClose,
   PanelLeft,
   LogOut,
@@ -50,6 +51,7 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
       items: [
         { id: 'sales', label: dict.nav.salesInvoices, icon: <Receipt size={18} /> },
         { id: 'purchases', label: dict.nav.purchasesExpenses, icon: <CreditCard size={18} /> },
+        { id: 'inventory', label: dict.nav.inventory, icon: <Boxes size={18} /> },
         { id: 'banking', label: dict.nav.cashBanking, icon: <Landmark size={18} /> },
       ],
     },
@@ -85,8 +87,8 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
         className={`sidebar-container ${mobileOpen ? 'mobile-open' : ''}`}
         style={{
           width: isCollapsed ? '72px' : '250px',
-          backgroundColor: '#111A2E',
-          borderInlineEnd: '1px solid #1D2A44',
+          backgroundColor: 'var(--surface-1)',
+          borderInlineEnd: '1px solid var(--border)',
           display: 'flex',
           flexDirection: 'column',
           flexShrink: 0,
@@ -102,7 +104,7 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
             alignItems: 'center',
             justifyContent: isCollapsed ? 'center' : 'space-between',
             padding: isCollapsed ? '0 12px' : '0 16px',
-            borderBottom: '1px solid #1D2A44',
+            borderBottom: '1px solid var(--border)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
@@ -112,8 +114,8 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
                 height: '32px',
                 minWidth: '32px',
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #DFBF6E 0%, #C9A24B 100%)',
-                boxShadow: '0 2px 8px rgba(201, 162, 75, 0.3)',
+                background: 'linear-gradient(135deg, var(--gold-hover) 0%, var(--gold) 100%)',
+                boxShadow: '0 2px 8px var(--gold-glow)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -127,13 +129,13 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
             </div>
             {!isCollapsed && (
               <div style={{ whiteSpace: 'nowrap' }}>
-                <div style={{ fontWeight: 700, fontSize: '13px', color: '#F0F4FA', letterSpacing: '-0.2px' }}>
+                <div style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text-ivory)', letterSpacing: '-0.2px' }}>
                   Universal Accounting
                 </div>
                 <div
                   style={{
                     fontSize: '10px',
-                    color: '#C9A24B',
+                    color: 'var(--gold)',
                     letterSpacing: '0.4px',
                     fontWeight: 600,
                   }}
@@ -152,7 +154,7 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#8A97B2',
+                color: 'var(--text-secondary)',
                 cursor: 'pointer',
                 padding: '4px',
                 display: 'flex',
@@ -172,7 +174,7 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#8A97B2',
+                color: 'var(--text-secondary)',
                 display: 'none',
                 padding: '4px',
               }}
@@ -201,7 +203,7 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
                     fontSize: '11px',
                     fontWeight: 600,
                     letterSpacing: '0.06em',
-                    color: '#7E8DA6',
+                    color: 'var(--text-muted)',
                     padding: '4px 10px 8px',
                     textTransform: 'uppercase',
                   }}
@@ -222,10 +224,10 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
                     borderRadius: '6px',
                     fontSize: '13px',
                     fontWeight: active ? 600 : 500,
-                    color: active ? '#F0F4FA' : '#8A97B2',
-                    backgroundColor: active ? '#16223A' : 'transparent',
-                    border: active ? '1px solid #22304D' : '1px solid transparent',
-                    borderInlineStart: active ? '3px solid #C9A24B' : '3px solid transparent',
+                    color: active ? 'var(--text-ivory)' : 'var(--text-secondary)',
+                    backgroundColor: active ? 'var(--surface-3)' : 'transparent',
+                    border: active ? '1px solid var(--border-card)' : '1px solid transparent',
+                    borderInlineStart: active ? '3px solid var(--gold)' : '3px solid transparent',
                     textAlign: 'start',
                     textDecoration: 'none',
                     transition: 'all 120ms ease',
@@ -234,7 +236,7 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
 
                   const innerContent = (
                     <>
-                      <span style={{ color: active ? '#C9A24B' : '#7E8DA6', display: 'flex' }}>
+                      <span style={{ color: active ? 'var(--gold)' : 'var(--text-muted)', display: 'flex' }}>
                         {item.icon}
                       </span>
                       {!isCollapsed && <span>{item.label}</span>}
@@ -281,8 +283,8 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
         <div
           style={{
             padding: isCollapsed ? '10px 8px' : '10px 14px',
-            borderTop: '1px solid #1D2A44',
-            backgroundColor: '#0E1626',
+            borderTop: '1px solid var(--border)',
+            backgroundColor: 'var(--surface-subtle)',
           }}
         >
           {!isCollapsed ? (
@@ -293,11 +295,12 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
                     width: '30px',
                     height: '30px',
                     borderRadius: '50%',
-                    backgroundColor: '#1E2C48',
+                    backgroundColor: 'var(--surface-3)',
+                    border: '1px solid var(--border-subtle)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#C9A24B',
+                    color: 'var(--gold)',
                     fontWeight: 700,
                     fontSize: '12px',
                     flexShrink: 0,
@@ -306,10 +309,10 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
                   U
                 </div>
                 <div style={{ overflow: 'hidden' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#F0F4FA', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
                     Authorized User
                   </div>
-                  <div style={{ fontSize: '10px', color: '#7E8DA6', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                     /{storeSlug || 'store'}
                   </div>
                 </div>
@@ -320,7 +323,7 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#7E8DA6',
+                  color: 'var(--text-muted)',
                   cursor: 'pointer',
                   padding: '4px',
                   display: 'flex',
@@ -338,11 +341,12 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
                   width: '30px',
                   height: '30px',
                   borderRadius: '50%',
-                  backgroundColor: '#1E2C48',
+                  backgroundColor: 'var(--surface-3)',
+                  border: '1px solid var(--border-subtle)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#C9A24B',
+                  color: 'var(--gold)',
                   fontWeight: 700,
                   fontSize: '12px',
                 }}
@@ -355,7 +359,7 @@ export function Sidebar({ storeSlug, activeTab, onTabChange, mobileOpen, onClose
         </div>
 
         {/* Real System Status Footer */}
-        <div style={{ padding: isCollapsed ? '8px 4px' : '10px 14px', borderTop: '1px solid #1D2A44' }}>
+        <div style={{ padding: isCollapsed ? '8px 4px' : '10px 14px', borderTop: '1px solid var(--border)' }}>
           <SystemStatusBadge />
         </div>
       </aside>

@@ -7,11 +7,31 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import mongoose from 'mongoose';
-import { Company, CompanyMembership, TenantContext } from '@accounting/database';
+import { Company, CompanyMembership, Subscription, TenantContext } from '@accounting/database';
 import { COMPANY_SLUG_REGEX, RESERVED_COMPANY_SLUGS } from '@accounting/contracts';
+
+interface CachedSubscription {
+  status: string;
+  expiresAt: number;
+}
 
 @Injectable()
 export class TenantGuard implements CanActivate {
+  private static readonly subscriptionCache = new Map<string, CachedSubscription>();
+  private static readonly SUBSCRIPTION_CACHE_TTL_MS = 45_000; // 45 seconds
+
+  public static invalidateSubscriptionCache(companyId: string): void {
+    TenantGuard.subscriptionCache.delete(companyId);
+  }
+
+  public static clearSubscriptionCache(): void {
+    TenantGuard.subscriptionCache.clear();
+  }
+
+  public static getCachedSubscription(companyId: string): CachedSubscription | undefined {
+    return TenantGuard.subscriptionCache.get(companyId);
+  }
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
@@ -85,6 +105,40 @@ export class TenantGuard implements CanActivate {
 
     if (!membership) {
       throw new ForbiddenException('Access denied: You are not an authorized member of this store.');
+    }
+
+    // Subscription Enforcement Policy (Single Source of Truth)
+    // Cached lookup (45 seconds TTL) to prevent repeated DB hits
+    const companyIdStr = company._id.toString();
+    const now = Date.now();
+    let subStatus: string;
+    const cached = TenantGuard.subscriptionCache.get(companyIdStr);
+
+    if (cached && cached.expiresAt > now) {
+      subStatus = cached.status;
+    } else {
+      const subscription = await Subscription.findOne({ companyId: company._id }).lean();
+      subStatus = subscription?.status || 'ACTIVE';
+      TenantGuard.subscriptionCache.set(companyIdStr, {
+        status: subStatus,
+        expiresAt: now + TenantGuard.SUBSCRIPTION_CACHE_TTL_MS,
+      });
+    }
+
+    if (subStatus === 'SUSPENDED') {
+      throw new ForbiddenException(
+        'Company account is suspended. Please contact platform support / কোম্পানির অ্যাকাউন্টটি স্থগিত করা হয়েছে। অনুগ্রহ করে সাপোর্ট টিমের সাথে যোগাযোগ করুন।'
+      );
+    }
+
+    if (subStatus === 'READ_ONLY') {
+      const method = (request.method || 'GET').toUpperCase();
+      const isReadOnlySafe = method === 'GET' || method === 'HEAD' || method === 'OPTIONS';
+      if (!isReadOnlySafe) {
+        throw new ForbiddenException(
+          'Subscription is in read-only mode due to billing status. Modifications are disabled / বিলিং স্ট্যাটাসের কারণে অ্যাকাউন্টটি রিড-অনলি মোডে রয়েছে। কোনো তথ্য পরিবর্তন বা নতুন ভাউচার লেখা যাবে না।'
+        );
+      }
     }
 
     const tenantContext: TenantContext = {

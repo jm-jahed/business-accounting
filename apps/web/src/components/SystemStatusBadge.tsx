@@ -62,9 +62,9 @@ export function SystemStatusBadge() {
     <div
       style={{
         padding: '12px 14px',
-        backgroundColor: '#16223A',
+        backgroundColor: 'var(--surface-3)',
         borderRadius: '8px',
-        border: '1px solid #22304D',
+        border: '1px solid var(--border-card)',
         fontSize: '12px',
       }}
     >
@@ -77,10 +77,10 @@ export function SystemStatusBadge() {
               borderRadius: '50%',
               backgroundColor: statusColor,
               display: 'inline-block',
-              boxShadow: isConnected ? '0 0 8px rgba(47, 191, 143, 0.4)' : 'none',
+              boxShadow: isConnected ? '0 0 8px var(--success-glow)' : 'none',
             }}
           />
-          <span style={{ fontWeight: 600, color: '#E6EAF2' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
             {loading && !health ? 'Probing Services...' : isConnected ? 'Database Connected' : 'Backend Disconnected'}
           </span>
         </div>
@@ -90,7 +90,7 @@ export function SystemStatusBadge() {
           style={{
             background: 'none',
             border: 'none',
-            color: '#8A97B2',
+            color: 'var(--text-muted)',
             padding: '2px',
             display: 'flex',
             alignItems: 'center',
@@ -100,14 +100,14 @@ export function SystemStatusBadge() {
         </button>
       </div>
 
-      <div style={{ marginTop: '6px', fontSize: '11px', color: '#8A97B2', lineHeight: 1.4 }}>
+      <div style={{ marginTop: '6px', fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
         {isConnected ? (
           <>
-            <div>DB: <span style={{ color: '#E6EAF2', fontWeight: 500 }}>{health?.database?.databaseName || 'business_accounting'}</span></div>
-            <div>Latency: <span style={{ color: '#C9A24B', fontWeight: 500 }}>{health?.database?.pingMs ?? 50} ms</span> (Atlas Dedicated)</div>
+            <div>DB: <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{health?.database?.databaseName || 'business_accounting'}</span></div>
+            <div>Latency: <span style={{ color: 'var(--gold)', fontWeight: 500 }}>{health?.database?.pingMs ?? 50} ms</span> (Atlas Dedicated)</div>
           </>
         ) : error ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#E5484D' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--danger)' }}>
             <AlertCircle size={12} />
             <span>API Server Unreachable</span>
           </div>

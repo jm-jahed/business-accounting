@@ -8,6 +8,7 @@ import {
   BookOpen,
   Receipt,
   Settings,
+  Boxes,
   X,
   Search,
   FileSpreadsheet,
@@ -60,10 +61,10 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
         style={{
           width: '100%',
           maxWidth: '560px',
-          backgroundColor: '#111A2E',
-          border: '1px solid #22304D',
+          backgroundColor: 'var(--surface-2)',
+          border: '1px solid var(--border-card)',
           borderRadius: '12px',
-          boxShadow: '0 20px 45px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 162, 75, 0.2)',
+          boxShadow: 'var(--shadow-elevated)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -77,10 +78,10 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
               alignItems: 'center',
               gap: '10px',
               padding: '14px 16px',
-              borderBottom: '1px solid #1D2A44',
+              borderBottom: '1px solid var(--border-subtle)',
             }}
           >
-            <Search size={18} color="#C9A24B" />
+            <Search size={18} color="var(--gold)" />
             <Command.Input
               placeholder="Search accounts, journal vouchers, operations..."
               autoFocus
@@ -88,7 +89,7 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                 background: 'transparent',
                 border: 'none',
                 outline: 'none',
-                color: '#F0F4FA',
+                color: 'var(--text-primary)',
                 fontSize: '14px',
                 width: '100%',
               }}
@@ -98,7 +99,7 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#7E8DA6',
+                color: 'var(--text-muted)',
                 cursor: 'pointer',
                 padding: '2px',
               }}
@@ -119,7 +120,7 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
               style={{
                 padding: '24px',
                 textAlign: 'center',
-                color: '#7E8DA6',
+                color: 'var(--text-muted)',
                 fontSize: '13px',
               }}
             >
@@ -132,7 +133,7 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
               style={{
                 fontSize: '11px',
                 fontWeight: 600,
-                color: '#8A97B2',
+                color: 'var(--text-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 padding: '6px 8px',
@@ -149,14 +150,14 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                   gap: '10px',
                   padding: '9px 12px',
                   borderRadius: '7px',
-                  color: '#E6EAF2',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   marginBottom: '2px',
                 }}
                 className="cmdk-item"
               >
-                <LayoutDashboard size={15} color="#C9A24B" />
+                <LayoutDashboard size={15} color="var(--gold)" />
                 <span>Financial Overview Dashboard</span>
               </Command.Item>
 
@@ -171,14 +172,14 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                   gap: '10px',
                   padding: '9px 12px',
                   borderRadius: '7px',
-                  color: '#E6EAF2',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   marginBottom: '2px',
                 }}
                 className="cmdk-item"
               >
-                <Layers size={15} color="#2FBF8F" />
+                <Layers size={15} color="var(--success)" />
                 <span>Chart of Accounts (17 Standard Accounts)</span>
               </Command.Item>
 
@@ -193,14 +194,14 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                   gap: '10px',
                   padding: '9px 12px',
                   borderRadius: '7px',
-                  color: '#E6EAF2',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   marginBottom: '2px',
                 }}
                 className="cmdk-item"
               >
-                <BookOpen size={15} color="#60A5FA" />
+                <BookOpen size={15} color="var(--info)" />
                 <span>General Ledger & Journal Entries</span>
               </Command.Item>
 
@@ -215,15 +216,37 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                   gap: '10px',
                   padding: '9px 12px',
                   borderRadius: '7px',
-                  color: '#E6EAF2',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   marginBottom: '2px',
                 }}
                 className="cmdk-item"
               >
-                <Receipt size={15} color="#F59E0B" />
+                <Receipt size={15} color="var(--warning)" />
                 <span>Sales & Client Invoices (AR)</span>
+              </Command.Item>
+
+              <Command.Item
+                onSelect={() => {
+                  onSelectTab('inventory');
+                  onOpenChange(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '9px 12px',
+                  borderRadius: '7px',
+                  color: 'var(--text-primary)',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  marginBottom: '2px',
+                }}
+                className="cmdk-item"
+              >
+                <Boxes size={15} color="var(--gold)" />
+                <span>Inventory & Warehouses (Stock Control)</span>
               </Command.Item>
 
               <Command.Item
@@ -237,14 +260,14 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                   gap: '10px',
                   padding: '9px 12px',
                   borderRadius: '7px',
-                  color: '#E6EAF2',
+                  color: 'var(--text-primary)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   marginBottom: '2px',
                 }}
                 className="cmdk-item"
               >
-                <Settings size={15} color="#8A97B2" />
+                <Settings size={15} color="var(--text-secondary)" />
                 <span>Enterprise & Tenant Settings</span>
               </Command.Item>
             </Command.Group>
@@ -255,11 +278,11 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
               style={{
                 fontSize: '11px',
                 fontWeight: 600,
-                color: '#8A97B2',
+                color: 'var(--text-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 padding: '8px 8px 4px',
-                borderTop: '1px solid #1D2A44',
+                borderTop: '1px solid var(--border-subtle)',
                 marginTop: '6px',
               }}
             >
@@ -274,17 +297,17 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                   justifyContent: 'space-between',
                   padding: '8px 12px',
                   borderRadius: '7px',
-                  color: '#E6EAF2',
+                  color: 'var(--text-primary)',
                   fontSize: '12px',
                   cursor: 'pointer',
                 }}
                 className="cmdk-item"
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontFamily: 'monospace', color: '#DFBF6E', fontWeight: 600 }}>JV-2026-0042</span>
+                  <span style={{ fontFamily: 'monospace', color: 'var(--gold)', fontWeight: 600 }}>JV-2026-0042</span>
                   <span>Commercial Sales Receipt #INV-1092</span>
                 </div>
-                <span style={{ color: '#2FBF8F', fontWeight: 600 }}>AED 15,400.00</span>
+                <span style={{ color: 'var(--success)', fontWeight: 600 }}>AED 15,400.00</span>
               </Command.Item>
 
               <Command.Item
@@ -298,17 +321,17 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
                   justifyContent: 'space-between',
                   padding: '8px 12px',
                   borderRadius: '7px',
-                  color: '#E6EAF2',
+                  color: 'var(--text-primary)',
                   fontSize: '12px',
                   cursor: 'pointer',
                 }}
                 className="cmdk-item"
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontFamily: 'monospace', color: '#DFBF6E', fontWeight: 600 }}>JV-2026-0041</span>
+                  <span style={{ fontFamily: 'monospace', color: 'var(--gold)', fontWeight: 600 }}>JV-2026-0041</span>
                   <span>Office Rent & Utilities Allocation</span>
                 </div>
-                <span style={{ color: '#EC5A60', fontWeight: 600 }}>AED 8,250.00</span>
+                <span style={{ color: 'var(--danger)', fontWeight: 600 }}>AED 8,250.00</span>
               </Command.Item>
             </Command.Group>
           </Command.List>
@@ -317,13 +340,13 @@ export function CommandPalette({ open, onOpenChange, onSelectTab }: CommandPalet
           <div
             style={{
               padding: '8px 14px',
-              backgroundColor: '#0E1626',
-              borderTop: '1px solid #1D2A44',
+              backgroundColor: 'var(--surface-3)',
+              borderTop: '1px solid var(--border-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               fontSize: '11px',
-              color: '#7E8DA6',
+              color: 'var(--text-muted)',
             }}
           >
             <span>Navigate with ↑ ↓ and Enter</span>

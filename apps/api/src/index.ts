@@ -22,6 +22,9 @@ export * from './common/decorators/current-user.decorator.js';
 export * from './common/decorators/current-tenant.decorator.js';
 export * from './common/decorators/roles.decorator.js';
 export * from './app.module.js';
+export * from './dashboard/dashboard.controller.js';
+export * from './dashboard/dashboard.service.js';
+export * from './dashboard/dashboard.module.js';
 export * from './main.js';
 
 export const API_VERSION = '1.0.0';

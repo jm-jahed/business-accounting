@@ -36,12 +36,12 @@ export function ThemeToggle() {
           width: '32px',
           height: '32px',
           borderRadius: '7px',
-          backgroundColor: '#16223A',
-          border: '1px solid #22304D',
+          backgroundColor: 'var(--surface-3)',
+          border: '1px solid var(--border-default)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#8A97B2',
+          color: 'var(--text-muted)',
         }}
         aria-label="Toggle theme"
       >
@@ -57,12 +57,12 @@ export function ThemeToggle() {
         width: '32px',
         height: '32px',
         borderRadius: '7px',
-        backgroundColor: theme === 'dark' ? '#16223A' : '#F1F5F9',
-        border: theme === 'dark' ? '1px solid #22304D' : '1px solid #CBD5E1',
+        backgroundColor: 'var(--surface-3)',
+        border: '1px solid var(--border-default)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: theme === 'dark' ? '#DFBF6E' : '#B45309',
+        color: 'var(--gold)',
         cursor: 'pointer',
         transition: 'all 150ms ease',
       }}

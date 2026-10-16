@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
-import { AccountType, NormalBalance, getNormalBalanceForAccountType } from '@accounting/contracts';
+import { AccountType, NormalBalance, AccountSystemRole, getNormalBalanceForAccountType } from '@accounting/contracts';
 
 export interface IAccount extends Document {
   companyId: Types.ObjectId;
@@ -7,6 +7,7 @@ export interface IAccount extends Document {
   code: string;
   name: string;
   type: AccountType;
+  systemRole?: AccountSystemRole | null;
   normalBalance: NormalBalance;
   parentId?: Types.ObjectId | null;
   currency?: string | null;
@@ -49,6 +50,25 @@ const AccountSchema = new Schema<IAccount>(
       type: String,
       enum: ['ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE'],
       required: [true, 'Account type is required'],
+      index: true,
+    },
+    systemRole: {
+      type: String,
+      enum: [
+        'CASH',
+        'BANK',
+        'RECEIVABLE',
+        'PAYABLE',
+        'VAT_OUTPUT',
+        'VAT_INPUT',
+        'COGS',
+        'INVENTORY',
+        'EQUITY',
+        'REVENUE',
+        'EXPENSE',
+        null,
+      ],
+      default: null,
       index: true,
     },
     normalBalance: {
@@ -107,6 +127,7 @@ AccountSchema.index({ companyId: 1, code: 1 }, { unique: true });
 
 // Compound query index for fast balance sheet and income statement queries
 AccountSchema.index({ companyId: 1, type: 1, isActive: 1 });
+AccountSchema.index({ companyId: 1, systemRole: 1, isActive: 1 });
 
 export const Account: Model<IAccount> =
   mongoose.models.Account || mongoose.model<IAccount>('Account', AccountSchema);

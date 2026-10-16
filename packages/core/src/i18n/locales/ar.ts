@@ -7,6 +7,7 @@ export const ar: TranslationDictionary = Object.freeze({
     generalLedger: 'دفتر الأستاذ العام',
     salesInvoices: 'المبيعات والفواتير',
     purchasesExpenses: 'المشتريات والمصروفات',
+    inventory: 'المخزون والمستودعات',
     cashBanking: 'النقدية والبنوك',
     financialReports: 'التقارير المالية',
     auditTrail: 'سجل التدقيق والرقابة',

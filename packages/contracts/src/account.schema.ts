@@ -3,6 +3,21 @@ import { z } from 'zod';
 export const AccountTypeEnum = z.enum(['ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE']);
 export type AccountType = z.infer<typeof AccountTypeEnum>;
 
+export const AccountSystemRoleEnum = z.enum([
+  'CASH',
+  'BANK',
+  'RECEIVABLE',
+  'PAYABLE',
+  'VAT_OUTPUT',
+  'VAT_INPUT',
+  'COGS',
+  'INVENTORY',
+  'EQUITY',
+  'REVENUE',
+  'EXPENSE',
+]);
+export type AccountSystemRole = z.infer<typeof AccountSystemRoleEnum>;
+
 export const NormalBalanceEnum = z.enum(['DEBIT', 'CREDIT']);
 export type NormalBalance = z.infer<typeof NormalBalanceEnum>;
 
@@ -34,6 +49,7 @@ export const ChartOfAccountInputSchema = z.object({
     .regex(/^[0-9A-Za-z._-]+$/, 'Account code must be alphanumeric with optional dots or dashes'),
   name: z.string().trim().min(2, 'Account name must be at least 2 characters').max(100),
   type: AccountTypeEnum,
+  systemRole: AccountSystemRoleEnum.optional().nullable(),
   parentId: z.string().optional().nullable(),
   currency: z.string().trim().length(3).optional().nullable(),
   isActive: z.boolean().default(true),
@@ -56,6 +72,7 @@ export const CreateAccountInputSchema = z.object({
     .min(2, 'Account name must be at least 2 characters')
     .max(100, 'Account name cannot exceed 100 characters'),
   type: AccountTypeEnum,
+  systemRole: AccountSystemRoleEnum.optional().nullable(),
   parentId: z.string().trim().optional().nullable(),
   currency: z.string().trim().length(3, 'Currency code must be 3 characters').optional().nullable(),
   description: z.string().trim().max(500, 'Description cannot exceed 500 characters').optional().nullable(),
@@ -77,6 +94,7 @@ export const UpdateAccountInputSchema = z.object({
     .max(20, 'Account code cannot exceed 20 characters')
     .regex(/^[0-9A-Za-z._-]+$/, 'Account code must be alphanumeric with optional dots, hyphens, or underscores')
     .optional(),
+  systemRole: AccountSystemRoleEnum.optional().nullable(),
   parentId: z.string().trim().optional().nullable(),
   currency: z.string().trim().length(3).optional().nullable(),
   description: z.string().trim().max(500).optional().nullable(),
@@ -87,6 +105,7 @@ export type UpdateAccountInput = z.infer<typeof UpdateAccountInputSchema>;
 
 export const AccountQueryFilterSchema = z.object({
   type: AccountTypeEnum.optional(),
+  systemRole: AccountSystemRoleEnum.optional(),
   isActive: z
     .union([z.boolean(), z.enum(['true', 'false']).transform((val) => val === 'true')])
     .optional(),
@@ -103,6 +122,7 @@ export interface AccountResponseDto {
   code: string;
   name: string;
   type: AccountType;
+  systemRole?: AccountSystemRole | null;
   normalBalance: NormalBalance;
   parentId?: string | null;
   currency?: string | null;
